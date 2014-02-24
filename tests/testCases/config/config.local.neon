@@ -1,0 +1,13 @@
+# rename this file to config.local.neon
+parameters:
+    db:
+        host: 127.0.0.1
+        driver: mysql
+        database: blog
+        user: root
+        password:
+        profiler: TRUE
+
+services:
+
+factories:
