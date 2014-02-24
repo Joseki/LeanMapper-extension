@@ -5,23 +5,18 @@ use Nette\DI\Container;
 use Tester\Assert;
 
 $container = require __DIR__ . '/../bootstrap.php';
+require __DIR__ . '/ServiceLocator.php';
 
 class MapperTest extends Tester\TestCase
 {
-	private $container;
 	/** @var  Joseki\LeanMapper\Mapper */
 	private $mapper;
 
-	function __construct(Container $container)
-	{
-		$this->container = $container;
-	}
 
 	function setUp()
 	{
 		/** @var Joseki\LeanMapper\Mapper $mapper */
-		$this->mapper = $this->container->getByType('\\Joseki\\LeanMapper\\Mapper');
-		$this->mapper->addTablePrefix('Fakturace');
+		$this->mapper = \Joseki\Tests\ServiceLocator::getMapper();
 	}
 
 	function testGetTable()

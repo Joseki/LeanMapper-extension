@@ -1,2 +1,3 @@
-libs/*
+vendor/*
 .idea
+composer.lock

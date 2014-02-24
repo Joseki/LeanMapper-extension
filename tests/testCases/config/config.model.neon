@@ -1,6 +1,0 @@
-services:
-
-    - App\Tables\UserRepository
-    - App\Tables\RoleRepository
-    - App\Tables\ArticleRepository
-    - App\Tables\TagRepository
