@@ -8,8 +8,8 @@ use LeanMapper\Row;
 /**
  * Standard mapper for conventions:
  * - underdash separated names of tables and cols
- * - PK and FK is in [table]_id format
- * - entity repository is named [Entity]Repository
+ * - PK and FK is in [destinationtable] format
+ * - entity repository is named [Entity[\SubModule]]Repository
  * - M:N relations are stored in [table1]_[table2] tables
  *
  * @author Jan Nedbal
@@ -20,6 +20,7 @@ class Mapper extends DefaultMapper
 	/** @var string */
 	protected $defaultEntityNamespace = 'App\\Tables';
 
+	/** @var  array */
 	public $predefinedPrefixes;
 
 	function __construct($predefinedPrefixes = array())
@@ -28,7 +29,7 @@ class Mapper extends DefaultMapper
 	}
 
 	/**
-	 * @param $prefix
+	 * @param string $prefix
 	 */
 	public function addTablePrefix($prefix)
 	{
@@ -103,6 +104,7 @@ class Mapper extends DefaultMapper
 
 	/**
 	 * App\Repository\SomeEntityRepository -> some_entity
+	 * App\Repository\Module\SomeEntityRepository -> module_some_entity
 	 * @param string $repositoryClass
 	 * @return string
 	 */
@@ -140,10 +142,10 @@ class Mapper extends DefaultMapper
 	}
 
 	/**
-	 * Trims namespace part from fully qualified class name
-	 * Handles table prefixes from extended namespaces
-	 * App\Entity\User => User
-	 * [\]App\Entity\Netiso\User => NetisoUser
+	 * Trims default namespace part from fully qualified class name
+	 * Joins remaining namespaces (from predefined prefixes) with classname into a single name
+	 * [\]App\Entity\User => User
+	 * [\]App\Entity\Module\User => ModuleUser
 	 *
 	 * @param $class
 	 * @return string
