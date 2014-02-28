@@ -7,15 +7,25 @@ use DibiFluent;
 use LeanMapper\Connection;
 use Nette\Object;
 
+
+/**
+ * Query Object over DibiFluent
+ *
+ * @author Miroslav Paulík
+ */
 class Query extends Object
 {
 	/** @var  DibiFluent */
 	private $fluent;
 
+
+
 	public function __construct(Connection $connection)
 	{
 		$this->fluent = $connection->command();
 	}
+
+
 
 	public function select($field)
 	{
@@ -23,11 +33,15 @@ class Query extends Object
 		return $this;
 	}
 
+
+
 	public function distinct()
 	{
 		$this->fluent->distinct();
 		return $this;
 	}
+
+
 
 	public function from($table)
 	{
@@ -35,11 +49,15 @@ class Query extends Object
 		return $this;
 	}
 
+
+
 	public function join($table)
 	{
 		call_user_func_array(array($this->fluent, 'join'), func_get_args());
 		return $this;
 	}
+
+
 
 	public function on($cond)
 	{
@@ -47,11 +65,15 @@ class Query extends Object
 		return $this;
 	}
 
+
+
 	public function where($cond)
 	{
 		call_user_func_array(array($this->fluent, 'where'), func_get_args());
 		return $this;
 	}
+
+
 
 	public function groupBy($field)
 	{
@@ -59,17 +81,23 @@ class Query extends Object
 		return $this;
 	}
 
+
+
 	public function having($cond)
 	{
 		call_user_func_array(array($this->fluent, 'having'), func_get_args());
 		return $this;
 	}
 
+
+
 	public function orderBy($field)
 	{
 		call_user_func_array(array($this->fluent, 'orderBy'), func_get_args());
 		return $this;
 	}
+
+
 
 	public function limit($limit)
 	{
@@ -78,6 +106,8 @@ class Query extends Object
 		return $this;
 	}
 
+
+
 	public function offset($offset)
 	{
 		$this->fluent->removeClause('offset');
@@ -85,17 +115,23 @@ class Query extends Object
 		return $this;
 	}
 
+
+
 	public function removeClause($clause)
 	{
 		$this->fluent->removeClause($clause);
 		return $this;
 	}
 
+
+
 	public function count()
 	{
 		$this->fluent->count();
 		return $this;
 	}
+
+
 
 	/**
 	 * Exports current state
@@ -108,10 +144,5 @@ class Query extends Object
 	{
 		return $this->fluent->_export($clause, $args);
 	}
-
-}
-
-class InvalidStateException extends \LogicException
-{
 
 }

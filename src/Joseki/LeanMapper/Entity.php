@@ -9,6 +9,10 @@ use LeanMapper\Exception\InvalidArgumentException;
 
 
 /**
+ * Base entity with enumeration support
+ *
+ * @author Miroslav Paulík
+ *
  * @property int $id
  */
 class BaseEntity extends Entity
@@ -29,6 +33,7 @@ class BaseEntity extends Entity
 		return $values;
 	}
 }
+
 
 
 

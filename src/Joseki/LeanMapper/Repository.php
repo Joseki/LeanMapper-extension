@@ -8,7 +8,14 @@ use LeanMapper\Exception\InvalidArgumentException;
 use LeanMapper\IMapper;
 use LeanMapper\Repository as LR;
 
+
+
 /**
+ *
+ * Base repository with Query Object support
+ *
+ * @author Miroslav Paulík
+ *
  * @property array $onBeforePersist
  * @property array $onBeforeCreate
  * @property array $onBeforeUpdate
@@ -30,6 +37,8 @@ abstract class Repository extends LR
 		parent::__construct($connection, $mapper);
 	}
 
+
+
 	/**
 	 * @return Query
 	 */
@@ -40,6 +49,8 @@ abstract class Repository extends LR
 		return $query;
 	}
 
+
+
 	/**
 	 * @param Query $query
 	 * @return \DibiResult|int
@@ -48,6 +59,8 @@ abstract class Repository extends LR
 	{
 		return $this->connection->query($this->translate($query));
 	}
+
+
 
 	/**
 	 * @param Query $query
@@ -69,10 +82,12 @@ abstract class Repository extends LR
 		return $translated;
 	}
 
+
+
 	/**
 	 * @param $query
 	 * @return array|mixed
-	 * @throws \LeanMapper\Exception\InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 * @throws NotFoundException
 	 */
 	public function findBy($query)
@@ -96,6 +111,8 @@ abstract class Repository extends LR
 		return $this->createEntities($this->prepare($query)->fetchAll());
 	}
 
+
+
 	/**
 	 * @param null $limit
 	 * @param null $offset
@@ -113,9 +130,11 @@ abstract class Repository extends LR
 		return $this->findBy($query);
 	}
 
+
+
 	/**
 	 * @param Query|array $query
-	 * @throws \LeanMapper\Exception\InvalidArgumentException
+	 * @throws InvalidArgumentException
 	 * @return array|mixed
 	 */
 	public function findOneBy($query)
@@ -128,6 +147,8 @@ abstract class Repository extends LR
 		$query->limit(1);
 		return $this->findBy($query);
 	}
+
+
 
 	/**
 	 * @param $id

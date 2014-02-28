@@ -1,7 +1,6 @@
 <?php
 
-use Joseki\LeanMapper\Mapper;
-use Nette\DI\Container;
+use JosekiTests\Mapper\TestMapper;
 use Tester\Assert;
 
 $container = require __DIR__ . '/../bootstrap.php';
@@ -9,36 +8,35 @@ require __DIR__ . '/ServiceLocator.php';
 
 class MapperTest extends Tester\TestCase
 {
-	/** @var  Joseki\LeanMapper\Mapper */
+	/** @var  TestMapper */
 	private $mapper;
 
 
 	function setUp()
 	{
-		/** @var Joseki\LeanMapper\Mapper $mapper */
+		/** @var TestMapper $mapper */
 		$this->mapper = \Joseki\Tests\ServiceLocator::getMapper();
 	}
 
 	function testGetTable()
 	{
-		Assert::same('user', $this->mapper->getTable('App\\Tables\\User'));
-		Assert::same('user', $this->mapper->getTable('\\App\\Tables\\User'));
-		Assert::same('fakturace_user', $this->mapper->getTable('App\\Tables\\Fakturace\\User'));
-		Assert::same('fakturace_user', $this->mapper->getTable('\\App\\Tables\\Fakturace\\User'));
+		Assert::same('article', $this->mapper->getTable('JosekiTests\\Tables\\Article'));
+		Assert::same('article', $this->mapper->getTable('\\JosekiTests\\Tables\\Article'));
+		Assert::same('modul_entity', $this->mapper->getTable('JosekiTests\\Tables\\Modul\\Entity'));
+		Assert::same('modul_entity', $this->mapper->getTable('\\JosekiTests\\Tables\\Modul\\Entity'));
 	}
 
 	function testGetEntityClass() {
-		Assert::same('App\\Tables\\User', $this->mapper->getEntityClass('user'));
-		Assert::same('App\\Tables\\Fakturace\\User', $this->mapper->getEntityClass('fakturace_user'));
-		Assert::same('App\\Tables\\Dane\\User', $this->mapper->getEntityClass('dane_user'));
+		Assert::same('JosekiTests\\Tables\\Article', $this->mapper->getEntityClass('article'));
+		Assert::same('JosekiTests\\Tables\\Modul\\Entity', $this->mapper->getEntityClass('modul_entity'));
 	}
 
 	function testGetColumn() {
-		Assert::same('link_name', $this->mapper->getColumn('App\\Tables\\Article', 'linkName'));
+		Assert::same('long_name', $this->mapper->getColumn('JosekiTests\\Tables\\Article', 'longName'));
 	}
 
 	function testGetEntityField() {
-		Assert::same('linkName', $this->mapper->getEntityField('article', 'link_name'));
+		Assert::same('longName', $this->mapper->getEntityField('article', 'long_name'));
 	}
 
 	function testGetRelationshipColumn() {
@@ -46,8 +44,8 @@ class MapperTest extends Tester\TestCase
 	}
 
 	function testGetTableByRepositoryClass() {
-		Assert::same('user', $this->mapper->getTableByRepositoryClass('App\\Tables\\UserRepository'));
-		Assert::same('fakturace_user', $this->mapper->getTableByRepositoryClass('App\\Tables\\Fakturace\\UserRepository'));
+		Assert::same('article', $this->mapper->getTableByRepositoryClass('JosekiTests\\Tables\\ArticleRepository'));
+		Assert::same('modul_entity', $this->mapper->getTableByRepositoryClass('JosekiTests\\Tables\\Modul\\EntityRepository'));
 	}
 }
 

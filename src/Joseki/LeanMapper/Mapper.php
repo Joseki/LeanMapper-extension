@@ -5,6 +5,8 @@ namespace Joseki\LeanMapper;
 use LeanMapper\DefaultMapper;
 use LeanMapper\Row;
 
+
+
 /**
  * Standard mapper for conventions:
  * - underdash separated names of tables and cols
@@ -23,10 +25,14 @@ class Mapper extends DefaultMapper
 	/** @var  array */
 	public $predefinedPrefixes;
 
+
+
 	function __construct($predefinedPrefixes = array())
 	{
 		$this->predefinedPrefixes = $predefinedPrefixes;
 	}
+
+
 
 	/**
 	 * @param string $prefix
@@ -38,6 +44,8 @@ class Mapper extends DefaultMapper
 		}
 	}
 
+
+
 	/**
 	 * App\Entity\SomeEntity -> some_entity
 	 * @param string $entityClass
@@ -47,6 +55,8 @@ class Mapper extends DefaultMapper
 	{
 		return $this->camelToUnderdash($this->trimNamespace($entityClass));
 	}
+
+
 
 	/**
 	 * some_entity -> App\Entity\SomeEntity
@@ -70,6 +80,8 @@ class Mapper extends DefaultMapper
 		return $namespace . ucfirst($this->underdashToCamel($table));
 	}
 
+
+
 	/**
 	 * someField -> some_field
 	 * @param string $entityClass
@@ -80,6 +92,8 @@ class Mapper extends DefaultMapper
 	{
 		return $this->camelToUnderdash($field);
 	}
+
+
 
 	/**
 	 * some_field -> someField
@@ -92,6 +106,8 @@ class Mapper extends DefaultMapper
 		return $this->underdashToCamel($column);
 	}
 
+
+
 	/**
 	 * @param string $sourceTable
 	 * @param string $targetTable
@@ -101,6 +117,8 @@ class Mapper extends DefaultMapper
 	{
 		return $targetTable;
 	}
+
+
 
 	/**
 	 * App\Repository\SomeEntityRepository -> some_entity
@@ -114,6 +132,8 @@ class Mapper extends DefaultMapper
 		return $this->camelToUnderdash($this->trimNamespace($class));
 	}
 
+
+
 	/**
 	 * camelCase -> underdash_separated.
 	 * @param  string
@@ -126,6 +146,8 @@ class Mapper extends DefaultMapper
 		$s = rawurlencode($s);
 		return $s;
 	}
+
+
 
 	/**
 	 * underdash_separated -> camelCase
@@ -141,6 +163,8 @@ class Mapper extends DefaultMapper
 		return $s;
 	}
 
+
+
 	/**
 	 * Trims default namespace part from fully qualified class name
 	 * Joins remaining namespaces (from predefined prefixes) with classname into a single name
@@ -154,8 +178,10 @@ class Mapper extends DefaultMapper
 	{
 		$class = ltrim($class, '\\');
 		$namespaces = explode('\\', $class);
-		if (count($namespaces) > 3) {
-			$namespaces = array_slice($namespaces, 2);
+		$defaultNamespaces = explode('\\', $this->defaultEntityNamespace);
+
+		if (count($namespaces) > count($defaultNamespaces) + 1) {
+			$namespaces = array_slice($namespaces, count($defaultNamespaces));
 			return implode("", $namespaces);
 		} else {
 			return end($namespaces);
