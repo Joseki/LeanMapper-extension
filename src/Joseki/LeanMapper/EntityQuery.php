@@ -2,7 +2,6 @@
 
 namespace Joseki\LeanMapper;
 
-use LeanMapperQuery\Query;
 use LeanMapperQuery\Entity;
 
 class EntityQuery extends Query implements \Countable
@@ -24,23 +23,23 @@ class EntityQuery extends Query implements \Countable
 
 
 
-    public function find()
+    public function findBy()
     {
-        return $this->entity->{'find' . ucfirst($this->field)}($this);
+        return $this->entity->{'findBy' . ucfirst($this->field)}($this);
     }
 
 
 
-    public function findOne()
+    public function findOneBy()
     {
-        return $this->entity->{'findOne' . ucfirst($this->field)}($this);
+        return $this->entity->{'findOneBy' . ucfirst($this->field)}($this);
     }
 
 
 
     public function count()
     {
-        return $this->entity->{'findCount' . ucfirst($this->field)}($this);
+        return $this->entity->{'findCountBy' . ucfirst($this->field)}($this);
     }
 
 }

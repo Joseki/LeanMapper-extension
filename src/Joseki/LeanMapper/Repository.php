@@ -8,6 +8,7 @@ use LeanMapper\Exception\InvalidArgumentException;
 use LeanMapper\IMapper;
 use LeanMapper\Repository as LR;
 use LeanMapperQuery\IQuery;
+use Nette\Utils\Paginator;
 
 /**
  * @property array $onBeforePersist
@@ -19,10 +20,10 @@ use LeanMapperQuery\IQuery;
  * @property array $onAfterUpdate
  * @property array $onAfterDelete
  */
-abstract class Repository extends LR implements IQueryable
+abstract class Repository extends LR implements Queryable
 {
 
-    private function apply(IQuery $query)
+    private function apply(Query $query)
     {
         $fluent = $this->createFluent();
         $query->applyQuery($fluent, $this->mapper);
@@ -33,18 +34,48 @@ abstract class Repository extends LR implements IQueryable
 
     public function createQuery()
     {
-        return new RepositoryQuery($this);
+        return new Query();
+    }
+
+
+
+
+    public function findBy($query)
+    {
+        if (func_num_args() > 1) {
+            $query = $this->createQuery();
+            call_user_func_array(array($query, 'where'), func_get_args());
+        }
+        if (!$query instanceof IQuery) {
+            if (is_object($query)) {
+                $class = get_class($query);
+                throw new InvalidArgumentException("Exptected instance of \\LeanMapperQuery\\IQuery, instance of $class given.");
+            } else {
+                $type = gettype($query);
+                throw new InvalidArgumentException("Exptected instance of \\LeanMapperQuery\\IQuery, $type given.");
+            }
+        }
+
+        return $this->createEntities($this->apply($query)->fetchAll());
     }
 
 
 
     /**
-     * @param IQuery $query
-     * @return Entity[]
+     * @param Query $query
+     * @throws NotFoundException
+     * @return Entity|NULL
      */
-    public function findBy(IQuery $query)
+    public function findOneBy(Query $query)
     {
-        return $this->createEntities($this->apply($query)->fetchAll());
+        $row = $this->apply($query)
+            ->removeClause('limit')
+            ->removeClause('offset')
+            ->fetch();
+        if ($row === null) {
+            throw new NotFoundException('Entity not found.');
+        }
+        return $this->createEntity($row);
     }
 
 
@@ -69,20 +100,29 @@ abstract class Repository extends LR implements IQueryable
 
 
     /**
-     * @param IQuery $query
-     * @throws NotFoundException
-     * @return Entity|NULL
+     * @param Query $query
+     * @return int
      */
-    public function findOneBy(IQuery $query)
+    public function findCountBy(Query $query)
     {
-        $row = $this->apply($query)
-            ->removeClause('limit')
-            ->removeClause('offset')
-            ->fetch();
-        if ($row === null) {
-            throw new NotFoundException;
-        }
-        return $this->createEntity($row);
+        return $this->apply($query)->count();
+    }
+
+
+
+    /**
+     * @param Query $query
+     * @param $page
+     * @param $itemsPerPage
+     * @return int
+     */
+    public function findPageBy(Query $query, $page, $itemsPerPage)
+    {
+        $paginator = new Paginator();
+        $paginator->itemCount = $this->findCountBy($query);
+        $paginator->itemsPerPage = $itemsPerPage;
+        $query->limit($itemsPerPage)->offset($paginator->offset);
+        return $this->findBy($query);
     }
 
 
@@ -93,16 +133,4 @@ abstract class Repository extends LR implements IQueryable
         $query = $this->createQuery()->where("$PK", $id);
         return $this->findOneBy($query);
     }
-
-
-
-    /**
-     * @param IQuery $query
-     * @return int
-     */
-    public function findCountBy(IQuery $query)
-    {
-        return count($this->apply($query));
-    }
-
 }

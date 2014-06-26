@@ -12,3 +12,8 @@ class InvalidStateException extends \LogicException
 {
 
 }
+
+class InvalidArgumentException extends \LogicException
+{
+
+}

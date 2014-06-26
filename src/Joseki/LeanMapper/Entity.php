@@ -8,11 +8,11 @@ use LeanMapperQuery\Entity;
 
 class BaseEntity extends Entity
 {
-    protected static $magicMethodsPrefixes = array('findOne', 'findCount', 'find');
+    protected static $magicMethodsPrefixes = array('findOneBy', 'findCountBy', 'findBy');
 
 
 
-    protected function find($field, EntityQuery $query)
+    protected function findBy($field, EntityQuery $query)
     {
         $entities = $this->queryProperty($field, $query);
         return $this->entityFactory->createCollection($entities);
@@ -20,7 +20,7 @@ class BaseEntity extends Entity
 
 
 
-    protected function findOne($field, EntityQuery $query)
+    protected function findOneBy($field, EntityQuery $query)
     {
         $query->limit(1);
         $entities = $this->queryProperty($field, $query);
@@ -32,7 +32,7 @@ class BaseEntity extends Entity
 
 
 
-    protected function findCount($field, EntityQuery $query)
+    protected function findCountBy($field, EntityQuery $query)
     {
         return count($this->queryProperty($field, $query));
     }
