@@ -50,6 +50,25 @@ abstract class Repository extends LR implements IQueryable
 
 
     /**
+     * @param null $limit
+     * @param null $offset
+     * @return Entity[]
+     */
+    public function findAll($limit = null, $offset = null)
+    {
+        $query = $this->createQuery();
+        if ($limit) {
+            $query->limit($limit);
+        }
+        if ($offset) {
+            $query->offset($offset);
+        }
+        return $this->findBy($query);
+    }
+
+
+
+    /**
      * @param IQuery $query
      * @throws NotFoundException
      * @return Entity|NULL
