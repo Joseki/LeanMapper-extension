@@ -2,10 +2,7 @@
 
 namespace Joseki\LeanMapper;
 
-use LeanMapper\Connection;
 use LeanMapper\Entity;
-use LeanMapper\Exception\InvalidArgumentException;
-use LeanMapper\IMapper;
 use LeanMapper\Repository as LR;
 use LeanMapperQuery\IQuery;
 use Nette\Utils\Paginator;
@@ -20,7 +17,7 @@ use Nette\Utils\Paginator;
  * @property array $onAfterUpdate
  * @property array $onAfterDelete
  */
-abstract class Repository extends LR implements Queryable
+abstract class Repository extends LR
 {
 
     private function apply(Query $query)
@@ -32,6 +29,9 @@ abstract class Repository extends LR implements Queryable
 
 
 
+    /**
+     * @return Query
+     */
     public function createQuery()
     {
         return new Query();
@@ -39,7 +39,11 @@ abstract class Repository extends LR implements Queryable
 
 
 
-
+    /**
+     * @param Query|string $query
+     * @return Entity[]
+     * @throws InvalidArgumentException
+     */
     public function findBy($query)
     {
         if (func_num_args() > 1) {
@@ -62,12 +66,26 @@ abstract class Repository extends LR implements Queryable
 
 
     /**
-     * @param Query $query
+     * @param Query|string $query
+     * @return Entity
+     * @throws InvalidArgumentException
      * @throws NotFoundException
-     * @return Entity|NULL
      */
-    public function findOneBy(Query $query)
+    public function findOneBy($query)
     {
+        if (func_num_args() > 1) {
+            $query = $this->createQuery();
+            call_user_func_array(array($query, 'where'), func_get_args());
+        }
+        if (!$query instanceof IQuery) {
+            if (is_object($query)) {
+                $class = get_class($query);
+                throw new InvalidArgumentException("Exptected instance of \\LeanMapperQuery\\IQuery, instance of $class given.");
+            } else {
+                $type = gettype($query);
+                throw new InvalidArgumentException("Exptected instance of \\LeanMapperQuery\\IQuery, $type given.");
+            }
+        }
         $row = $this->apply($query)
             ->removeClause('limit')
             ->removeClause('offset')
@@ -81,8 +99,8 @@ abstract class Repository extends LR implements Queryable
 
 
     /**
-     * @param null $limit
-     * @param null $offset
+     * @param int|null $limit
+     * @param int|null $offset
      * @return Entity[]
      */
     public function findAll($limit = null, $offset = null)
@@ -121,12 +139,18 @@ abstract class Repository extends LR implements Queryable
         $paginator = new Paginator();
         $paginator->itemCount = $this->findCountBy($query);
         $paginator->itemsPerPage = $itemsPerPage;
+        $paginator->page = $page;
         $query->limit($itemsPerPage)->offset($paginator->offset);
         return $this->findBy($query);
     }
 
 
 
+    /**
+     * @param $id
+     * @return Entity
+     * @throws NotFoundException
+     */
     public function get($id)
     {
         $PK = $this->mapper->getPrimaryKey($this->getTable());
