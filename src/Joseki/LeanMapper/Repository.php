@@ -154,7 +154,7 @@ abstract class Repository extends LR
     public function get($id)
     {
         $PK = $this->mapper->getPrimaryKey($this->getTable());
-        $query = $this->createQuery()->where("$PK", $id);
+        $query = $this->createQuery()->where("@$PK", $id);
         return $this->findOneBy($query);
     }
 }
