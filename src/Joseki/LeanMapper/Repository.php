@@ -90,7 +90,7 @@ abstract class Repository extends LR
             ->removeClause('limit')
             ->removeClause('offset')
             ->fetch();
-        if ($row === null) {
+        if ($row === false) {
             throw new NotFoundException('Entity not found.');
         }
         return $this->createEntity($row);
