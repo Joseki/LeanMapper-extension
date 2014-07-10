@@ -9,7 +9,7 @@ class MapperMock extends Mapper
 {
 
     /** @var string */
-    protected $defaultEntityNamespace = 'JosekiTests\\LeanMapperExtension\\Tables';
+    protected $defaultEntityNamespace = 'Tables';
 
 
 
@@ -23,12 +23,5 @@ class MapperMock extends Mapper
     public function underScoreToCamelMock($s)
     {
         return $this->underScoreToCamel($s);
-    }
-
-
-
-    public function reformatNamespacePrefixMock($s)
-    {
-        return $this->reformatNamespacePrefix($s);
     }
 } 

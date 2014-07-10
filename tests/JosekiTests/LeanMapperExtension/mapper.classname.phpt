@@ -26,52 +26,33 @@ class MapperTest extends Tester\TestCase
 
 
 
-    public function testUnderscoreToCamel()
-    {
-        Assert::same('Special', $this->mapper->reformatNamespacePrefixMock('Special'));
-        Assert::same('CamelCase', $this->mapper->reformatNamespacePrefixMock('camelCase'));
-        Assert::same('UnderscoreSeparated', $this->mapper->reformatNamespacePrefixMock('underscore_separated'));
-    }
-
-
-
     function testGetTable()
     {
-        Assert::same('user', $this->mapper->getTable('JosekiTests\\LeanMapperExtension\\Tables\\User'));
-        Assert::same('user', $this->mapper->getTable('\\JosekiTests\\LeanMapperExtension\\Tables\\User'));
-        Assert::same('special_user', $this->mapper->getTable('JosekiTests\\LeanMapperExtension\\Tables\\Special\\User'));
-        Assert::same('special_user', $this->mapper->getTable('\\JosekiTests\\LeanMapperExtension\\Tables\\Special\\User'));
+        Assert::same('user', $this->mapper->getTable('Tables\\User'));
+        Assert::same('user', $this->mapper->getTable('\\Tables\\User'));
     }
 
 
 
     function testGetEntityClass()
     {
-        Assert::same('JosekiTests\\LeanMapperExtension\\Tables\\User', $this->mapper->getEntityClass('user'));
-        Assert::same('JosekiTests\\LeanMapperExtension\\Tables\\Special\\User', $this->mapper->getEntityClass('special_user'));
-        Assert::same('JosekiTests\\LeanMapperExtension\\Tables\\CamelCase\\User', $this->mapper->getEntityClass('camelcase_user'));
+        Assert::same('Tables\\User', $this->mapper->getEntityClass('user'));
     }
 
 
 
     function testGetTableByRepositoryClass()
     {
-        Assert::same('user', $this->mapper->getTableByRepositoryClass('JosekiTests\\LeanMapperExtension\\Tables\\UserRepository'));
-        Assert::same(
-            'special_user',
-            $this->mapper->getTableByRepositoryClass('JosekiTests\\LeanMapperExtension\\Tables\\Special\\UserRepository')
-        );
-        Assert::same(
-            'camel_case_user',
-            $this->mapper->getTableByRepositoryClass('JosekiTests\\LeanMapperExtension\\Tables\\CamelCase\\UserRepository')
-        );
+        Assert::same('user', $this->mapper->getTableByRepositoryClass('Tables\\UserRepository'));
+        Assert::same('user', $this->mapper->getTableByRepositoryClass('Tables\\UserRepository'));
     }
 
 
 
     function testGetColumn()
     {
-        Assert::same('pub_date', $this->mapper->getColumn('JosekiTests\\LeanMapperExtension\\Tables\\Book', 'pubDate'));
+        Assert::same('pub_date', $this->mapper->getColumn('Tables\\Book', 'pubDate'));
+        Assert::same('author', $this->mapper->getColumn('Tables\\Special\\Book', 'author'));
     }
 
 

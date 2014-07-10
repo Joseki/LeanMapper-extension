@@ -7,8 +7,9 @@ use LeanMapper\Row;
 
 /**
  * Standard mapper for conventions:
- * - underdash separated names of tables and cols
- * - PK and FK is in [table]_id format
+ * - underscore separated names of tables and cols
+ * - PK is in id format
+ * - FK is in [table] format
  * - entity repository is named [Entity]Repository
  * - M:N relations are stored in [table1]_[table2] tables
  *
@@ -19,31 +20,6 @@ class Mapper extends DefaultMapper
 {
     /** @var string */
     protected $defaultEntityNamespace = 'App\\Tables';
-
-    public $predefinedPrefixes;
-
-
-
-    function __construct($predefinedPrefixes = array())
-    {
-        $correctPrefixes = array();
-        foreach ($predefinedPrefixes as $prefix) {
-            $correctPrefixes[] = $this->reformatNamespacePrefix($prefix);
-        }
-        $this->predefinedPrefixes = $correctPrefixes;
-    }
-
-
-
-    /**
-     * @param $prefix
-     */
-    public function addTablePrefix($prefix)
-    {
-        if (!in_array($prefix, $this->predefinedPrefixes)) {
-            $this->predefinedPrefixes[] = $this->reformatNamespacePrefix($prefix);
-        }
-    }
 
 
 
@@ -61,7 +37,6 @@ class Mapper extends DefaultMapper
 
     /**
      * some_entity -> App\Entity\SomeEntity
-     * some_entity -> App\Entity\Some\Entity if 'some' is a predefined prefix
      * @param string $table
      * @param Row $row
      * @return string
@@ -69,15 +44,6 @@ class Mapper extends DefaultMapper
     public function getEntityClass($table, Row $row = null)
     {
         $namespace = $this->defaultEntityNamespace . '\\';
-        $len = strlen($table);
-        foreach ($this->predefinedPrefixes as $prefix) {
-            $lowercasePrefix = strtolower($prefix);
-            if ($len > strlen($lowercasePrefix) && $lowercasePrefix . '_' == substr($table, 0, strlen($lowercasePrefix) + 1)) {
-                $namespace .= $prefix . '\\';
-                $table = substr($table, strlen($lowercasePrefix) + 1);
-                break;
-            }
-        }
         return $namespace . ucfirst($this->underscoreToCamel($table));
     }
 
@@ -165,18 +131,10 @@ class Mapper extends DefaultMapper
 
 
 
-    protected function reformatNamespacePrefix($prefix)
-    {
-        return ucfirst($this->underscoreToCamel($this->camelToUnderscore($prefix)));
-    }
-
-
-
     /**
      * Trims namespace part from fully qualified class name
      * Handles table prefixes from extended namespaces
      * App\Entity\User => User
-     * [\]App\Entity\Netiso\User => NetisoUser
      *
      * @param $class
      * @return string
@@ -185,14 +143,7 @@ class Mapper extends DefaultMapper
     {
         $class = ltrim($class, '\\');
         $namespaces = explode('\\', $class);
-        $defaultNamespaces = explode('\\', $this->defaultEntityNamespace);;
-        if (count($namespaces) > count($defaultNamespaces) + 1) {
-            $namespaces = array_slice($namespaces, count($defaultNamespaces));
-            return implode("", $namespaces);
-        } else {
-            return end($namespaces);
-        }
+        return end($namespaces);
     }
-
 }
 

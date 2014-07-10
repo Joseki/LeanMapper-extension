@@ -2,3 +2,5 @@ vendor/*
 .idea
 composer.lock
 tests/php-win.ini
+tests/test.log
+tests/JosekiTests/coverage.dat
