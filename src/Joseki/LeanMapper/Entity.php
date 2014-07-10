@@ -4,6 +4,7 @@
 namespace Joseki\LeanMapper;
 
 use LeanMapper\Exception\InvalidArgumentException;
+use LeanMapper\Relationship\HasOne;
 use LeanMapperQuery\Entity;
 
 class BaseEntity extends Entity
@@ -52,6 +53,26 @@ class BaseEntity extends Entity
             return $this->createQueryObject($matches[1]);
         } else {
             return parent::__call($name, $arguments);
+        }
+    }
+
+
+
+    public function __set($name, $value)
+    {
+        $property = $this->getCurrentReflection()->getEntityProperty($name);
+        $relationship = $property->getRelationship();
+        if (($relationship instanceof HasOne) and !($value instanceof \LeanMapper\Entity)) {
+            if (is_string($value) and ctype_digit($value)) {
+                settype($value, 'integer');
+            }
+            $this->row->{$property->getColumn()} = $value;
+            $this->row->cleanReferencedRowsCache(
+                $relationship->getTargetTable(),
+                $relationship->getColumnReferencingTargetTable()
+            );
+        } else {
+            parent::__set($name, $value);
         }
     }
 
