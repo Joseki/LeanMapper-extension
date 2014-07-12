@@ -9,7 +9,7 @@ class MapperMock extends Mapper
 {
 
     /** @var string */
-    protected $defaultEntityNamespace = 'Tables';
+    protected $defaultEntityNamespace = 'JosekiTests\LeanMapperExtension\Tables';
 
 
 
