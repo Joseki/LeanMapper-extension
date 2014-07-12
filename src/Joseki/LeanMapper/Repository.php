@@ -4,7 +4,6 @@ namespace Joseki\LeanMapper;
 
 use LeanMapper\Entity;
 use LeanMapper\Repository as LR;
-use LeanMapperQuery\IQuery;
 use Nette\Utils\Paginator;
 
 /**
@@ -20,7 +19,7 @@ use Nette\Utils\Paginator;
 abstract class Repository extends LR
 {
 
-    private function apply(Query $query)
+    protected function apply(Query $query)
     {
         $fluent = $this->createFluent();
         $query->applyQuery($fluent, $this->mapper);
@@ -50,13 +49,13 @@ abstract class Repository extends LR
             $query = $this->createQuery();
             call_user_func_array(array($query, 'where'), func_get_args());
         }
-        if (!$query instanceof IQuery) {
+        if (!$query instanceof Query) {
             if (is_object($query)) {
                 $class = get_class($query);
-                throw new InvalidArgumentException("Exptected instance of \\LeanMapperQuery\\IQuery, instance of $class given.");
+                throw new InvalidArgumentException("Exptected instance of '\\Joseki\\LeanMapper\\Query', instance of '$class' given.");
             } else {
                 $type = gettype($query);
-                throw new InvalidArgumentException("Exptected instance of \\LeanMapperQuery\\IQuery, $type given.");
+                throw new InvalidArgumentException("Exptected instance of '\\Joseki\\LeanMapper\\Query', '$type' given.");
             }
         }
 
@@ -77,13 +76,13 @@ abstract class Repository extends LR
             $query = $this->createQuery();
             call_user_func_array(array($query, 'where'), func_get_args());
         }
-        if (!$query instanceof IQuery) {
+        if (!$query instanceof Query) {
             if (is_object($query)) {
                 $class = get_class($query);
-                throw new InvalidArgumentException("Exptected instance of \\LeanMapperQuery\\IQuery, instance of $class given.");
+                throw new InvalidArgumentException("Exptected instance of '\\Joseki\\LeanMapper\\Query', instance of '$class' given.");
             } else {
                 $type = gettype($query);
-                throw new InvalidArgumentException("Exptected instance of \\LeanMapperQuery\\IQuery, $type given.");
+                throw new InvalidArgumentException("Exptected instance of '\\Joseki\\LeanMapper\\Query', '$type' given.");
             }
         }
         $row = $this->apply($query)
