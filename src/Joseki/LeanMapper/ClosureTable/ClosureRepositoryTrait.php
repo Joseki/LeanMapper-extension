@@ -3,6 +3,7 @@
 namespace Joseki\LeanMapper\ClosureTable;
 
 use Joseki\LeanMapper\BaseEntity;
+use ReflectionClass;
 
 trait ClosureRepositoryTrait
 {
@@ -52,6 +53,13 @@ trait ClosureRepositoryTrait
             ->on('%n.%n = %n.descendant', $tableAlias, $primaryKey, $closureAlias)
             ->where('%n.ancestor = %s', $closureAlias, $id)
             ->where('%n.depth = 1', $closureAlias);
+
+        $entityClass = $this->mapper->getEntityClass($this->getTable());
+
+        $rc = new ReflectionClass($entityClass);
+        if ($rc->implementsInterface('Joseki\LeanMapper\ClosureTable\ISortable')) {
+            $fluent->orderBy('%n.order', $tableAlias);
+        }
 
         return $this->createEntities($fluent->fetchAll());
     }
@@ -104,7 +112,14 @@ trait ClosureRepositoryTrait
             ->where('%n.ancestor = %s', $firstClosureAlias, $value)
             ->where('%n.depth = 1', $secondClosureAlias);
 
-        $closureEntity = $this->mapper->getEntityClass($this->getTable()) . 'Closure';
+        $entityClass = $this->mapper->getEntityClass($this->getTable());
+
+        $rc = new ReflectionClass($entityClass);
+        if ($rc->implementsInterface('Joseki\LeanMapper\ClosureTable\ISortable')) {
+            $fluent->orderBy('%n.order', $tableAlias);
+        }
+
+        $closureEntity = $entityClass . 'Closure';
         return $this->createEntities($fluent->fetchAll(), $closureEntity);
     }
 
