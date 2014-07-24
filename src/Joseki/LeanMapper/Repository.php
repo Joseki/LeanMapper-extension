@@ -133,8 +133,11 @@ abstract class Repository extends LR
      * @param $itemsPerPage
      * @return int
      */
-    public function findPageBy(Query $query, $page, $itemsPerPage)
+    public function findPageBy(Query $query = null, $page, $itemsPerPage)
     {
+        if ($query === null) {
+            $query = new Query();
+        }
         $paginator = new Paginator();
         $paginator->itemCount = $this->findCountBy($query);
         $paginator->itemsPerPage = $itemsPerPage;
