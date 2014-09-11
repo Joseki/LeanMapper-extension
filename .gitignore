@@ -1,9 +1,9 @@
 vendor/*
 .idea
 composer.lock
-tests/php-win.ini
 tests/test.log
 tests/JosekiTests/coverage.dat
 tests/JosekiTests/LeanMapperExtension/db/adminer.css
+tests/JosekiTests/LeanMapperExtension/db/database.sq3
 tests/JosekiTests/LeanMapperExtension/db/index.php
 tests/JosekiTests/LeanMapperExtension/output/
