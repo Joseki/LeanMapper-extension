@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * TEST: closure table test.
+ *
+ * @phpVersion 5.4
+ */
+
 use Dibi\Bridges\Tracy\Panel;
 use JosekiTests\LeanMapperExtension\MapperMock;
 use JosekiTests\LeanMapperExtension\ServiceLocator;
