@@ -75,11 +75,11 @@ trait ClosureRepositoryTrait
     {
         $primaryKey = $this->mapper->getPrimaryKey($this->getTable());
         $entities = $this->getSubtreeData($id, $primaryKey);
-        $children = [];
+        $children = array();
         foreach ($entities as $entity) {
             $key = $entity->ancestor->id;
             if (!isset($children[$key])) {
-                $children[$key] = [];
+                $children[$key] = array();
             }
             $children[$key][] = $entity;
         }

@@ -45,7 +45,7 @@ class ClosureTableTest extends Tester\TestCase
 
     private function simplifieTree($data)
     {
-        $children = [];
+        $children = array();
         foreach ($data as $node) {
             $children[$node->data->id] = $this->simplifieTree($node->children);
         }
@@ -58,44 +58,44 @@ class ClosureTableTest extends Tester\TestCase
     {
         $tree = $this->repository->getSubtree(1);
         $actual = $this->simplifieTree($tree);
-        $expected = [
-            2 => [
-                3 => [],
-                4 => [],
-            ],
-            5 => [
-                6 => [
-                    11 => [],
-                    12 => [],
-                ],
-                7 => [],
-            ],
-            8 => [
-                9 => [],
-                10 => [],
-            ],
-        ];
+        $expected = array(
+            2 => array(
+                3 => array(),
+                4 => array(),
+            ),
+            5 => array(
+                6 => array(
+                    11 => array(),
+                    12 => array(),
+                ),
+                7 => array(),
+            ),
+            8 => array(
+                9 => array(),
+                10 => array(),
+            ),
+        );
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(5);
         $actual = $this->simplifieTree($tree);
-        $expected = [
-            6 => [
-                11 => [],
-                12 => [],
-            ],
-            7 => [],
-        ];
+        $expected = array(
+            6 => array(
+                11 => array(),
+                12 => array(),
+            ),
+            7 => array(),
+        );
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(7); // list
         $actual = $this->simplifieTree($tree);
-        $expected = [];
+        $expected = array();
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(50); // does not exist
         $actual = $this->simplifieTree($tree);
-        $expected = [];
+        $expected = array();
         Assert::equal($expected, $actual);
     }
 
@@ -105,12 +105,12 @@ class ClosureTableTest extends Tester\TestCase
     {
         $entities = $this->repository->getParents(4);
         $actual = array_keys($entities);
-        $expected = [4, 2, 1];
+        $expected = array(4, 2, 1);
         Assert::equal($expected, $actual);
 
         $entities = $this->repository->getParents(12);
         $actual = array_keys($entities);
-        $expected = [12, 6, 5, 1];
+        $expected = array(12, 6, 5, 1);
         Assert::equal($expected, $actual);
     }
 
@@ -120,17 +120,17 @@ class ClosureTableTest extends Tester\TestCase
     {
         $entities = $this->repository->getChildren(4);
         $actual = array_keys($entities);
-        $expected = [];
+        $expected = array();
         Assert::equal($expected, $actual);
 
         $entities = $this->repository->getChildren(1);
         $actual = array_keys($entities);
-        $expected = [2, 5, 8];
+        $expected = array(2, 5, 8);
         Assert::equal($expected, $actual);
 
         $entities = $this->repository->getChildren(6);
         $actual = array_keys($entities);
-        $expected = [11, 12];
+        $expected = array(11, 12);
         Assert::equal($expected, $actual);
     }
 }

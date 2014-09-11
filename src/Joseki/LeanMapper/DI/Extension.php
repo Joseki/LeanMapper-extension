@@ -7,10 +7,10 @@ use Nette;
 class Extension extends Nette\DI\CompilerExtension
 {
 
-    public $defaults = [
-        'packages' => [],
+    public $defaults = array(
+        'packages' => array(),
         'mapperClass' => 'Joseki\LeanMapper\Mapper'
-    ];
+    );
 
 
 
@@ -37,8 +37,8 @@ class Extension extends Nette\DI\CompilerExtension
 
         unset($config['mapperClass'], $config['profiler'], $config['packages']);
 
-        $packages=[];
-        $tables=[];
+        $packages = array();
+        $tables = array();
         $this->parsePackages($packages, $tables, $packageStruct);
 
         foreach ($tables as $table => $package) {
@@ -86,7 +86,7 @@ class Extension extends Nette\DI\CompilerExtension
         foreach ($data as $prefix => $table) {
             if (is_string($table)) {
                 if (!isset($packages[$package])) {
-                    $packages[$package] = [];
+                    $packages[$package] = array();
                 }
                 $packages[$package][] = $table;
                 if (array_key_exists($table, $tables)) {
