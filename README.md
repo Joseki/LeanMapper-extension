@@ -21,7 +21,7 @@ $ composer require joseki/leanmapper-extension:@dev
 
 With Nette stable 2.1 or newer, this is how you install the extension
 
-```ini
+```
 LeanMapperExtension: Joseki\LeanMapper\DI\Extension
 
 LeanMapperExtension:
