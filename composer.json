@@ -1,7 +1,6 @@
 {
     "name": "joseki/leanmapper-extension",
     "description": "This is an extension of Tharos/LeanMapper ORM. This extension contains mapper specification and a Query object including its usage in a repository",
-    "minimum-stability": "alpha",
     "license": "MIT",
     "authors": [
         {
@@ -11,7 +10,7 @@
     ],
     "require": {
         "php": ">= 5.3.0",
-        "tharos/leanmapper": ">= 2.0.1",
+        "tharos/leanmapper": ">= 2.1",
         "mbohuslavek/leanmapper-query": "@dev",
         "nette/utils": ">= 2.1.0"
     },
