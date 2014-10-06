@@ -7,7 +7,7 @@ Requirements
 
 Joseki/LeanMapper-extension requires PHP 5.3 or higher.
 
-- [LeanMapper >= 2.0.1](http://www.leanmapper.com/)
+- [LeanMapper >= 2.1](http://www.leanmapper.com/)
 
 
 Installation
