@@ -25,7 +25,6 @@ With Nette stable 2.1 or newer, this is how you install the extension
 LeanMapperExtension: Joseki\LeanMapper\DI\Extension
 
 LeanMapperExtension:
-LeanMapper:
     host: host
     username: username
     password: password
