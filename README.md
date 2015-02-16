@@ -15,8 +15,12 @@ Installation
 
 The best way to install Joseki/LeanMapper-extension is using  [Composer](http://getcomposer.org/):
 
-```sh
-$ composer require joseki/leanmapper-extension:@dev
+```
+"require": {
+    "joseki/leanmapper-extension": "~1.0"
+},
+"minimum-stability": "dev",
+"prefer-stable": true
 ```
 
 With Nette stable 2.1 or newer, this is how you install the extension
