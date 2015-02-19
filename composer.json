@@ -11,7 +11,7 @@
     "require": {
         "php": ">= 5.3.0",
         "tharos/leanmapper": "~2.1",
-        "mbohuslavek/leanmapper-query": "@dev",
+        "joseki/leanmapper-query": "~1.0",
         "nette/utils": "~2.1"
     },
     "require-dev": {
@@ -21,7 +21,5 @@
     },
     "autoload": {
         "classmap": ["src"]
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": false
+    }
 }
