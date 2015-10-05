@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Joseki\LeanMapper\ClosureTable;
 
 use Joseki\LeanMapper\BaseEntity;
@@ -10,6 +9,7 @@ use Joseki\LeanMapper\BaseEntity;
  * @property BaseEntity $descendant (descendant)
  * @property int $depth
  */
-interface IClosureEntity {
+interface IClosureEntity
+{
 
 } 

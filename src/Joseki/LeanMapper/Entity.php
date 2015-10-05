@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Joseki\LeanMapper;
 
 use LeanMapper\Exception\InvalidArgumentException;

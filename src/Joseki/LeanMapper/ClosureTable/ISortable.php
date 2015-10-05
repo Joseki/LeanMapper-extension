@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Joseki\LeanMapper\ClosureTable;
 
 /**
