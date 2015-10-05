@@ -5,7 +5,7 @@ Joseki/LeanMapper-extension [![Build Status](https://secure.travis-ci.org/Joseki
 Requirements
 ------------
 
-Joseki/LeanMapper-extension requires PHP 5.3 or higher.
+Joseki/LeanMapper-extension requires PHP 5.4 or higher.
 
 - [LeanMapper >= 2.1](http://www.leanmapper.com/)
 
@@ -18,9 +18,7 @@ The best way to install Joseki/LeanMapper-extension is using  [Composer](http://
 ```
 "require": {
     "joseki/leanmapper-extension": "~1.0"
-},
-"minimum-stability": "dev",
-"prefer-stable": true
+}
 ```
 
 With Nette stable 2.1 or newer, this is how you install the extension
@@ -29,14 +27,18 @@ With Nette stable 2.1 or newer, this is how you install the extension
 LeanMapperExtension: Joseki\LeanMapper\DI\Extension
 
 LeanMapperExtension:
-    host: host
-    username: username
-    password: password
-    driver: driver
-    database: database
+    db:
+        host: host
+        username: username
+        password: password
+        driver: driver
+        database: database
+        # optional
+        lazy: TRUE
     # optional
-    lazy: TRUE
+    namespace: MyApplication    # Namespace prefix for your entities and repositories
     profiler: TRUE
+    logFile: path/to/log/file
 ```
 
 Tutorial
