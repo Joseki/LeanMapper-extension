@@ -7,10 +7,8 @@ use LeanMapper\Row;
 class PackageMapper extends Mapper
 {
 
-    const DEFAULT_PACKAGE_NAMESPACE = '';
-
     /** @var string */
-    protected $basePackagesNamespace = self::DEFAULT_PACKAGE_NAMESPACE;
+    protected $basePackagesNamespace;
 
     /** @var array */
     private $packages;
@@ -21,13 +19,15 @@ class PackageMapper extends Mapper
 
 
     /**
-     * @param $packages
-     * @param $tables
+     * @param array $packages
+     * @param array $tables
+     * @param $basePackagesNamespace
      */
-    public function __construct(array $packages, array $tables)
+    public function __construct(array $packages, array $tables, $basePackagesNamespace = '')
     {
         $this->packages = $packages;
         $this->tables = $tables;
+        $this->basePackagesNamespace = $basePackagesNamespace;
     }
 
 
