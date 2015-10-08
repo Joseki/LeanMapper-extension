@@ -141,12 +141,5 @@ class ClosureTableTest extends Tester\TestCase
     }
 }
 
-
-\Tracy\Debugger::enable(false);
-\Tracy\Debugger::$maxDepth = 10;
-
-$test = new ClosureTableTest($container);
-$panel = new Panel();
-$panel->register($test->connection);
-id($test)->run();
+id(new ClosureTableTest)->run();
 
