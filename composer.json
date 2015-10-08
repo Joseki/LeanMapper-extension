@@ -16,9 +16,13 @@
     },
     "require-dev": {
         "nette/di": "~2.2",
+        "nette/bootstrap": "~2.2",
         "nette/tester": "~1.0"
     },
     "autoload": {
         "classmap": ["src"]
+    },
+    "autoload-dev": {
+        "classmap": ["tests"]
     }
 }

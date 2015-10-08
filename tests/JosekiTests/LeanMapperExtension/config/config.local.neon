@@ -1,0 +1,8 @@
+parameters:
+  db:
+    host: 127.0.0.1
+    driver: mysql
+    database: testing
+    username: root
+    password:
+

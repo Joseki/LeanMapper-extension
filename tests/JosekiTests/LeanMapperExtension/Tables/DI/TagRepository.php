@@ -1,0 +1,18 @@
+<?php
+
+namespace UnitTests\Tables;
+
+use Joseki\LeanMapper\Repository;
+use LeanMapperQuery\IQuery;
+
+/**
+ * @method Tag get($id)
+ * @method Tag findOneBy(IQuery $query)
+ * @method Tag[] findAll($limit = null, $offset = null)
+ * @method Tag[] findBy(IQuery $query)
+ * @method Tag[] findCountBy(IQuery $query)
+ */
+class TagRepository extends Repository
+{
+
+}
