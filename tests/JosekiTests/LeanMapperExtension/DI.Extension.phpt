@@ -27,7 +27,7 @@ class DIExtensionTest extends \Tester\TestCase
 
 
 
-    public function testCreateCommand()
+    public function testRepository()
     {
         $configurator = $this->prepareConfigurator();
         $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon', $configurator::NONE);

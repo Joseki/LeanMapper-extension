@@ -27,7 +27,7 @@ class PackageMapperTest extends \Tester\TestCase
 
 
 
-    public function testCreateCommand()
+    public function testEntityClassGetter()
     {
         $configurator = $this->prepareConfigurator();
         $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon', $configurator::NONE);
