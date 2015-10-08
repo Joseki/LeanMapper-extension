@@ -21,8 +21,8 @@ class ServiceLocator
             self::$connection = new Connection(array(
                 'driver' => 'mysql',
                 'database' => 'testing',
-                'user' => 'travis',
-                'host' => 'localhost'
+                'username' => 'travis',
+                'host' => '127.0.0.1'
             ));
         }
         return self::$connection;
