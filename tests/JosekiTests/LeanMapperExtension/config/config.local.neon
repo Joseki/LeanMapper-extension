@@ -3,6 +3,6 @@ parameters:
     host: 127.0.0.1
     driver: mysql
     database: testing
-    username: root
+    username: travis
     password:
 
