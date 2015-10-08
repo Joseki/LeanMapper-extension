@@ -24,6 +24,7 @@ class Extension extends Nette\DI\CompilerExtension
 
         list($packages, $tables) = $this->findTablePackages($config);
         foreach ($tables as $table => $package) {
+            $table = ucfirst($this->underscoreToCamel($table));
             $container->addDefinition($this->prefix('table.' . $table))
                 ->setClass($config['namespace'] . '\\' . $package . '\\' . $table . 'Repository');
         }
@@ -85,7 +86,6 @@ class Extension extends Nette\DI\CompilerExtension
                 if (!isset($packages[$package])) {
                     $packages[$package] = [];
                 }
-                $table = ucfirst($this->underscoreToCamel($table));
                 $packages[$package][] = $table;
                 if (array_key_exists($table, $tables)) {
                     throw new \Exception("Multiple packages for table $table found.");
