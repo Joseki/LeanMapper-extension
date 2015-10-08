@@ -19,3 +19,4 @@ after_failure:
 before_script:
     # Install Nette Tester
     - composer install --no-interaction --dev --prefer-source
+    - mysql -e 'create database testing;'
