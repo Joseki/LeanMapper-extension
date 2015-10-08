@@ -2,7 +2,6 @@
 
 namespace JosekiTests\LeanMapperExtension;
 
-use Dibi\Bridges\Tracy\Panel;
 use Joseki\LeanMapper\Mapper;
 use LeanMapper\Connection;
 
@@ -20,8 +19,10 @@ class ServiceLocator
     {
         if (!self::$connection) {
             self::$connection = new Connection(array(
-                'driver' => 'sqlite3',
-                'database' => 'db/database.sq3',
+                'driver' => 'mysql',
+                'database' => 'testing',
+                'user' => 'travis',
+                'host' => 'localhost'
             ));
         }
         return self::$connection;
