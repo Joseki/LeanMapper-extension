@@ -3,6 +3,7 @@
 namespace Joseki\LeanMapper\ClosureTable;
 
 use Joseki\LeanMapper\BaseEntity;
+use LeanMapper\Entity;
 use ReflectionClass;
 
 trait ClosureRepositoryTrait
@@ -55,10 +56,16 @@ trait ClosureRepositoryTrait
             ->where('%n.depth = 1', $closureAlias);
 
         $entityClass = $this->mapper->getEntityClass($this->getTable());
-
         $rc = new ReflectionClass($entityClass);
+        $closureEntityClass = $entityClass . 'Closure';
         if ($rc->implementsInterface('Joseki\LeanMapper\ClosureTable\ISortable')) {
             $fluent->orderBy('%n.order', $tableAlias);
+        } else if (class_exists($closureEntityClass)) {
+            /** @var Entity $closureEntity */
+            $closureEntity = new $closureEntityClass;
+            if ($closureEntity->getReflection($this->mapper)->getEntityProperty('order')) {
+                $fluent->orderBy('%n.order', $closureAlias);
+            }
         }
 
         return $this->createEntities($fluent->fetchAll());
@@ -113,14 +120,19 @@ trait ClosureRepositoryTrait
             ->where('%n.depth = 1', $secondClosureAlias);
 
         $entityClass = $this->mapper->getEntityClass($this->getTable());
-
         $rc = new ReflectionClass($entityClass);
+        $closureEntityClass = $entityClass . 'Closure';
         if ($rc->implementsInterface('Joseki\LeanMapper\ClosureTable\ISortable')) {
             $fluent->orderBy('%n.order', $tableAlias);
+        } else if (class_exists($closureEntityClass)) {
+            /** @var Entity $closureEntity */
+            $closureEntity = new $closureEntityClass;
+            if ($closureEntity->getReflection($this->mapper)->getEntityProperty('order')) {
+                $fluent->orderBy('%n.order', $firstClosureAlias);
+            }
         }
 
-        $closureEntity = $entityClass . 'Closure';
-        return $this->createEntities($fluent->fetchAll(), $closureEntity);
+        return $this->createEntities($fluent->fetchAll(), $closureEntityClass);
     }
 
 
@@ -136,5 +148,40 @@ trait ClosureRepositoryTrait
             $nodes[$new] = new Node($entities[$new], $this->getChildNodes($new, $children, $entities, $primaryKey));
         }
         return $nodes;
+    }
+
+
+
+    public function moveNodeTo($node, $parent)
+    {
+        $table = $this->getTable();
+        $closure = $table . '_closure';
+        $A = 'ct_a';
+        $B = 'ct_b';
+        $C = 'ct_c';
+
+        $query = "DELETE %n FROM %n %n
+            JOIN %n %n USING(descendant)
+            LEFT JOIN %n %n ON %n.ancestor = %n.ancestor AND %n.descendant = %n.ancestor
+            WHERE %n.ancestor = %s AND %n.ancestor IS NULL";
+        $this->connection->query($query, $A, $closure, $A, $closure, $B, $closure, $C, $C, $B, $C, $A, $B, $node, $C);
+
+        $query = "INSERT INTO %n (ancestor, descendant, depth) (%sql)";
+        $subQuery = 'SELECT %n.ancestor, %n.descendant, %n.depth+%n.depth+1 FROM %n %n JOIN %n %n WHERE %n.ancestor = %s AND %n.descendant = %s';
+        $this->connection->query($query, $closure, [$subQuery, $A, $B, $A, $B, $closure, $A, $closure, $B, $B, $node, $A, $parent]);
+    }
+
+
+
+    public function createNode($id, $parent)
+    {
+        $table = $this->getTable();
+        $closure = $table . '_closure';
+
+        $query = "INSERT INTO %n (ancestor, descendant, depth) VALUES (%s, %s, 0)";
+        $this->connection->query($query, $closure, $id, $id);
+
+        $query = "INSERT INTO %n (ancestor, descendant, depth) SELECT ancestor, %s, depth+1 FROM %n WHERE descendant = %s";
+        $this->connection->query($query, $closure, $id, $closure, $parent);
     }
 } 
