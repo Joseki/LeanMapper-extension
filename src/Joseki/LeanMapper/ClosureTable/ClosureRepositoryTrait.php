@@ -108,13 +108,7 @@ trait ClosureRepositoryTrait
         $firstClosureAlias = 'cc';
         $secondClosureAlias = 'ccc';
         $fluent = $this->connection->command()
-            ->select(
-                '%n.*, %n.depth, %n.ancestor, %n.descendant',
-                $tableAlias,
-                $firstClosureAlias,
-                $secondClosureAlias,
-                $firstClosureAlias
-            )
+            ->select('%n.*, %n.depth, %n.ancestor, %n.descendant', $tableAlias, $firstClosureAlias, $secondClosureAlias, $firstClosureAlias            )
             ->from('%n AS %n', $table, $tableAlias)
             ->join('%n AS %n', $closure, $firstClosureAlias)
             ->on('%n.%n = %n.descendant', $tableAlias, $primaryKey, $firstClosureAlias)
