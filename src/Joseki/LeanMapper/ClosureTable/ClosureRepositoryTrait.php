@@ -96,7 +96,11 @@ trait ClosureRepositoryTrait
 
 
 
-    private function getSubtreeData($value, $primaryKey)
+    /**
+     * @internal
+     * @return Entity[]
+     */
+    public function getSubtreeData($value, $primaryKey)
     {
         $table = $this->getTable();
         $closure = $table . '_closure';
