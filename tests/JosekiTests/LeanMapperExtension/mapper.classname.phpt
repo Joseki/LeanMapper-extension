@@ -19,13 +19,6 @@ class MapperTest extends Tester\TestCase
 
 
 
-    public function testCamelToUnderscore()
-    {
-        Assert::same('camelCase', $this->mapper->underScoreToCamelMock('camel_case'));
-    }
-
-
-
     function testGetTable()
     {
         Assert::same('user', $this->mapper->getTable('JosekiTests\\LeanMapperExtension\\Tables\\User'));

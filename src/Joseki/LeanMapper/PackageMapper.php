@@ -38,7 +38,7 @@ class PackageMapper extends Mapper
     public function getEntityClass($table, Row $row = null)
     {
         $tablePackage = $this->tables[$table];
-        $table = ucfirst($this->underscoreToCamel($table));
+        $table = ucfirst(Utils::underscoreToCamel($table));
         return ltrim(sprintf('%s\%s', $tablePackage, $table), '\\');
     }
 }
