@@ -7,27 +7,27 @@ use LeanMapper\Row;
 class PackageMapper extends Mapper
 {
 
-    /** @var string */
-    protected $basePackagesNamespace;
+    /** @var array */
+    private $packages = [];
 
     /** @var array */
-    private $packages;
-
-    /** @var array */
-    private $tables;
+    private $tables = [];
 
 
 
     /**
-     * @param array $packages
      * @param array $tables
-     * @param $basePackagesNamespace
      */
-    public function __construct(array $packages, array $tables, $basePackagesNamespace = '')
+    public function __construct(array $tables = array())
     {
-        $this->packages = $packages;
         $this->tables = $tables;
-        $this->basePackagesNamespace = $basePackagesNamespace;
+
+        foreach ($this->tables as $table => $package) {
+            if (!array_key_exists($package, $this->packages)) {
+                $this->packages[$package] = [];
+            }
+            $this->packages[$package][] = $table;
+        }
     }
 
 
@@ -39,6 +39,6 @@ class PackageMapper extends Mapper
     {
         $tablePackage = $this->tables[$table];
         $table = ucfirst($this->underscoreToCamel($table));
-        return ltrim($this->basePackagesNamespace . '\\' . $tablePackage . '\\' . $table, '\\');
+        return ltrim(sprintf('%s\%s', $tablePackage, $table), '\\');
     }
 }

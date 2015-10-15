@@ -9,10 +9,6 @@ LeanMapper:
     driver: %db.driver%
     database: %db.database%
 
-  namespace: UnitTests
-
-  packages:
-    Tables:
-      - book
-      - tag
+  scanDirs:
+    - %appDir%/Tables/DI
 

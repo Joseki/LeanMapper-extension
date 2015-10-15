@@ -2,17 +2,20 @@
 
 namespace Joseki\LeanMapper\DI;
 
+use Joseki\LeanMapper\Utils;
 use Nette;
+use Nette\Loaders\RobotLoader;
+use Nette\Utils\Strings;
 
 class Extension extends Nette\DI\CompilerExtension
 {
 
     public $defaults = [
-        'packages' => [],
         'db' => [],
         'namespace' => '',
         'profiler' => true,
-        'logFile' => null
+        'logFile' => null,
+        'scanDirs' => null
     ];
 
 
@@ -20,23 +23,24 @@ class Extension extends Nette\DI\CompilerExtension
     public function loadConfiguration()
     {
         $container = $this->getContainerBuilder();
+        $this->defaults['scanDirs'] = $container->expand('%appDir%');
         $config = $this->getConfig($this->defaults);
 
-        list($packages, $tables) = $this->findTablePackages($config);
+        $tables = $this->findRepositories($config);
         foreach ($tables as $table => $package) {
-            $table = ucfirst($this->underscoreToCamel($table));
+            $table = ucfirst(Utils::underscoreToCamel($table));
             $container->addDefinition($this->prefix('table.' . $table))
-                ->setClass($config['namespace'] . '\\' . $package . '\\' . $table . 'Repository');
+                ->setClass(sprintf('%s\%sRepository', $package, $table));
         }
 
         $container->addDefinition($this->prefix('mapper'))
-            ->setClass('Joseki\LeanMapper\PackageMapper', array($packages, $tables, $config['namespace']));
+            ->setClass('Joseki\LeanMapper\PackageMapper', [$tables]);
 
         $container->addDefinition($this->prefix('entityFactory'))
             ->setClass('LeanMapper\DefaultEntityFactory');
 
         $connection = $container->addDefinition($this->prefix('connection'))
-            ->setClass('LeanMapper\Connection', array($config['db']));
+            ->setClass('LeanMapper\Connection', [$config['db']]);
 
         if (isset($config['db']['flags'])) {
             $flags = 0;
@@ -48,53 +52,45 @@ class Extension extends Nette\DI\CompilerExtension
 
         if (class_exists('Tracy\Debugger') && $container->parameters['debugMode'] && $config['profiler']) {
             $panel = $container->addDefinition($this->prefix('panel'))->setClass('Dibi\Bridges\Tracy\Panel');
-            $connection->addSetup(array($panel, 'register'), array($connection));
+            $connection->addSetup([$panel, 'register'], [$connection]);
             if ($config['logFile']) {
                 $fileLogger = $container->addDefinition($this->prefix('fileLogger'))->setClass('SavingFunds\LeanMapper\FileLogger');
-                $connection->addSetup(array($fileLogger, 'register'), array($connection, $config['logFile']));
+                $connection->addSetup([$fileLogger, 'register'], [$connection, $config['logFile']]);
             }
         }
     }
 
 
 
-    private function findTablePackages($config)
+    private function findRepositories($config)
     {
-        $packages = [];
-        $tables = [];
-        $this->parsePackages($packages, $tables, $config['packages']);
-        return array($packages, $tables);
-    }
+        $classes = array();
 
+        if ($config['scanDirs']) {
+            $robot = new RobotLoader;
+            $robot->setCacheStorage(new Nette\Caching\Storages\DevNullStorage);
+            $robot->addDirectory($config['scanDirs']);
+            $robot->acceptFiles = '*.php';
+            $robot->rebuild();
+            $classes = array_keys($robot->getIndexedClasses());
+        }
 
-
-    private function underscoreToCamel($s)
-    {
-        $s = strtolower($s);
-        $s = preg_replace('#_(?=[a-z])#', ' ', $s);
-        $s = substr(ucwords('x' . $s), 1);
-        $s = str_replace(' ', '', $s);
-        return $s;
-    }
-
-
-
-    private function parsePackages(&$packages, &$tables, $data, $package = '')
-    {
-        foreach ($data as $prefix => $table) {
-            if (is_string($table)) {
-                if (!isset($packages[$package])) {
-                    $packages[$package] = [];
+        $repositories = array();
+        foreach (array_unique($classes) as $class) {
+            if (class_exists($class)
+                && ($rc = new \ReflectionClass($class)) && $rc->isSubclassOf('Joseki\LeanMapper\Repository')
+                && !$rc->isAbstract()
+            ) {
+                $repositoryClass = $rc->getName();
+                $entityClass = Strings::endsWith($repositoryClass, 'Repository') ? substr($repositoryClass, 0, strlen($repositoryClass)-10) : $repositoryClass;
+                $table = Utils::camelToUnderscore(Utils::trimNamespace($entityClass));
+                if (array_key_exists($table, $repositories)) {
+                    throw new \Exception(sprintf('Multiple repositories for table %s found.', $table));
                 }
-                $packages[$package][] = $table;
-                if (array_key_exists($table, $tables)) {
-                    throw new \Exception("Multiple packages for table $table found.");
-                }
-                $tables[$table] = $package;
-            } elseif (is_array($table)) {
-                $this->parsePackages($packages, $tables, $table, trim("$package\\$prefix", '\\'));
+                $repositories[$table] = Utils::extractNamespace($repositoryClass);
             }
         }
-    }
+        return $repositories;
 
+    }
 }
