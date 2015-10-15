@@ -36,7 +36,6 @@ LeanMapperExtension:
         # optional
         lazy: TRUE
     # optional
-    namespace: MyApplication    # Namespace prefix for your entities and repositories
     profiler: TRUE
     logFile: path/to/log/file
 ```
