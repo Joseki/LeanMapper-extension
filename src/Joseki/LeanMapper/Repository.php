@@ -4,6 +4,7 @@ namespace Joseki\LeanMapper;
 
 use LeanMapper\Entity;
 use LeanMapper\Repository as LR;
+use Nette\Utils\Callback;
 use Nette\Utils\Paginator;
 
 /**
@@ -158,5 +159,22 @@ abstract class Repository extends LR
         $PK = $this->mapper->getPrimaryKey($this->getTable());
         $query = $this->createQuery()->where("@$PK", $id);
         return $this->findOneBy($query);
+    }
+
+
+
+    public function inTransaction($callback, array $args = [])
+    {
+        Callback::check($callback);
+        $this->connection->begin();
+        try {
+            $result = Callback::invokeArgs($callback, $args);
+        } catch (\Exception $e) {
+            $this->connection->rollback();
+            throw $e;
+        }
+        $this->connection->commit();
+
+        return $result;
     }
 }
