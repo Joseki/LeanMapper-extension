@@ -8,10 +8,10 @@ class PackageMapper extends Mapper
 {
 
     /** @var array */
-    private $packages = [];
+    private $tables = [];
 
     /** @var array */
-    private $tables = [];
+    private $repositories = [];
 
 
 
@@ -21,13 +21,7 @@ class PackageMapper extends Mapper
     public function __construct(array $tables = array())
     {
         $this->tables = $tables;
-
-        foreach ($this->tables as $table => $package) {
-            if (!array_key_exists($package, $this->packages)) {
-                $this->packages[$package] = [];
-            }
-            $this->packages[$package][] = $table;
-        }
+        $this->repositories = array_flip($tables);
     }
 
 
@@ -37,8 +31,7 @@ class PackageMapper extends Mapper
      */
     public function getEntityClass($table, Row $row = null)
     {
-        $tablePackage = $this->tables[$table];
-        $table = ucfirst(Utils::underscoreToCamel($table));
-        return ltrim(sprintf('%s\%s', $tablePackage, $table), '\\');
+        $repositoryClass = $this->tables[$table];
+        return substr($repositoryClass, 0, -10);
     }
 }

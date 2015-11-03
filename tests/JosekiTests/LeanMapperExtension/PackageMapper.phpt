@@ -42,6 +42,24 @@ class PackageMapperTest extends \Tester\TestCase
         Assert::equal('UnitTests\Tables\Book', $mapper->getEntityClass('book'));
         Assert::equal('UnitTests\Tables\Tag', $mapper->getEntityClass('tag'));
     }
+
+
+
+    public function testCustomTableNames()
+    {
+        $configurator = $this->prepareConfigurator();
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.2.neon', $configurator::NONE);
+
+        /** @var \Nette\DI\Container $container */
+        $container = $configurator->createContainer();
+
+        /** @var \Joseki\LeanMapper\PackageMapper $mapper */
+        $mapper = $container->getByType('Joseki\LeanMapper\PackageMapper');
+        Assert::true($mapper instanceof \Joseki\LeanMapper\PackageMapper);
+
+        Assert::equal('UnitTests\Tables\Book', $mapper->getEntityClass('fantasy_book'));
+        Assert::equal('UnitTests\Tables\Tag', $mapper->getEntityClass('tag'));
+    }
 }
 
 \run(new PackageMapperTest());

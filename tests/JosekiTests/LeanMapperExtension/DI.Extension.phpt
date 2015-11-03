@@ -37,6 +37,19 @@ class DIExtensionTest extends \Tester\TestCase
 
         Assert::equal(2, count($container->findByType('Joseki\LeanMapper\Repository')));
     }
+
+
+
+    public function testRepositoryMap()
+    {
+        $configurator = $this->prepareConfigurator();
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.2.neon', $configurator::NONE);
+
+        /** @var \Nette\DI\Container $container */
+        $container = $configurator->createContainer();
+
+        Assert::equal(2, count($container->findByType('Joseki\LeanMapper\Repository')));
+    }
 }
 
 \run(new DIExtensionTest());

@@ -15,7 +15,8 @@ class Extension extends Nette\DI\CompilerExtension
         'namespace' => '',
         'profiler' => true,
         'logFile' => null,
-        'scanDirs' => null
+        'scanDirs' => null,
+        'map' => [],
     ];
 
 
@@ -26,11 +27,10 @@ class Extension extends Nette\DI\CompilerExtension
         $this->defaults['scanDirs'] = $container->expand('%appDir%');
         $config = $this->getConfig($this->defaults);
 
-        $tables = $this->findRepositories($config);
-        foreach ($tables as $table => $package) {
-            $table = ucfirst(Utils::underscoreToCamel($table));
+        $tables = $this->mergeTables($this->findRepositories($config), $config['map']);
+        foreach ($tables as $table => $repositoryClass) {
             $container->addDefinition($this->prefix('table.' . $table))
-                ->setClass(sprintf('%s\%sRepository', $package, $table));
+                ->setClass($repositoryClass);
         }
 
         $container->addDefinition($this->prefix('mapper'))
@@ -87,10 +87,18 @@ class Extension extends Nette\DI\CompilerExtension
                 if (array_key_exists($table, $repositories)) {
                     throw new \Exception(sprintf('Multiple repositories for table %s found.', $table));
                 }
-                $repositories[$table] = Utils::extractNamespace($repositoryClass);
+                $repositories[$table] = $repositoryClass;
             }
         }
         return $repositories;
+    }
 
+
+
+    private function mergeTables($foundTables, $definedTables)
+    {
+        $foundTables = array_flip($foundTables);
+        $definedTables = array_flip($definedTables);
+        return array_flip(array_merge($foundTables, $definedTables));
     }
 }
