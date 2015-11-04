@@ -118,6 +118,8 @@ class ClosureTableTest extends Tester\TestCase
         $actual = array_keys($entities);
         $expected = array(12, 6, 5, 1);
         Assert::equal($expected, $actual);
+
+        Assert::equal("  SELECT `c`.* FROM `category` AS `c` JOIN `category_closure` AS `cc` ON `c`.`id` = `cc`.ancestor WHERE `cc`.descendant = '12' ORDER BY `cc`.depth ASC", dibi::$sql);
     }
 
 
