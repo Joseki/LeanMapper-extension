@@ -26,12 +26,32 @@ class PackageMapper extends Mapper
 
 
 
-    /*
+    /**
      * @inheritdoc
      */
     public function getEntityClass($table, Row $row = null)
     {
         $repositoryClass = $this->tables[$table];
         return substr($repositoryClass, 0, -10);
+    }
+
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getTableByRepositoryClass($repositoryClass)
+    {
+        return $this->repositories[$repositoryClass];
+    }
+
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getTable($entityClass)
+    {
+        return $this->getTableByRepositoryClass($entityClass . 'Repository');
     }
 }

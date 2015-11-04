@@ -59,6 +59,14 @@ class PackageMapperTest extends \Tester\TestCase
 
         Assert::equal('UnitTests\Tables\Book', $mapper->getEntityClass('fantasy_book'));
         Assert::equal('UnitTests\Tables\Tag', $mapper->getEntityClass('tag'));
+
+        Assert::equal('fantasy_book', $mapper->getTable('UnitTests\Tables\Book'));
+        Assert::equal('tag', $mapper->getTable('UnitTests\Tables\Tag'));
+
+        Assert::equal('fantasy_book', $mapper->getTableByRepositoryClass('UnitTests\Tables\BookRepository'));
+        Assert::equal('tag', $mapper->getTableByRepositoryClass('UnitTests\Tables\TagRepository'));
+
+        Assert::equal('fantasy_book_tag', $mapper->getRelationshipTable('fantasy_book', 'tag'));
     }
 }
 
