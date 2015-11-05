@@ -42,7 +42,7 @@ class PackageMapper extends Mapper
      */
     public function getTableByRepositoryClass($repositoryClass)
     {
-        return $this->repositories[$repositoryClass];
+        return isset($this->repositories[$repositoryClass]) ? $this->repositories[$repositoryClass] : null;
     }
 
 
