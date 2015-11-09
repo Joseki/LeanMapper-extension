@@ -149,6 +149,20 @@ abstract class Repository extends LR
 
 
 
+    public function findPairsBy($key, $value, Query $query = null)
+    {
+        $class = $this->mapper->getEntityClass($this->getTable());
+        $key = $this->mapper->getColumn($class, $key);
+        $value = $this->mapper->getColumn($class, $value);
+
+        if (!$query) {
+            $query = $this->createQuery();
+        }
+        return $this->apply($query)->fetchPairs($key, $value);
+    }
+
+
+
     /**
      * @param $id
      * @return Entity
