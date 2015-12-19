@@ -142,5 +142,6 @@ class ClosureTableTest extends Tester\TestCase
     }
 }
 
+\Tester\Environment::lock('database');
 id(new ClosureTableTest)->run();
 

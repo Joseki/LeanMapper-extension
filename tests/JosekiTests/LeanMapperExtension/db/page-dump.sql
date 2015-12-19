@@ -22,7 +22,8 @@ INSERT INTO `category` (`id`, `name`) VALUES
 (9,	'Wired'),
 (10,	'Wireless'),
 (11,	'3-Bottons'),
-(12,	'More-Bottons');
+(12,	'More-Bottons')
+ON DUPLICATE KEY UPDATE `id` = VALUES(`id`), `name` = VALUES(`name`);
 
 DROP TABLE IF EXISTS `category_closure`;
 CREATE TABLE `category_closure` (

@@ -37,6 +37,8 @@ class RepositoryTest extends Tester\TestCase
 
         Assert::true($repository instanceof CategoryRepository);
 
+        $container->getByType('\DibiConnection')->loadFile(__DIR__ . '/db/page-dump.sql');
+
         Assert::equal(
             ['PC' => 1, 'Printer' => 2, 'Laser' => 7, 'Ink' => 4, 'Mouse' => 5, 'Optic' => 6, 'Keyboard' => 8, 'Wired' => 9, 'Wireless' => 10, '3-Bottons' => 11, 'More-Bottons' => 12,],
             $repository->findPairsBy('name', 'id')
@@ -45,4 +47,5 @@ class RepositoryTest extends Tester\TestCase
 
 }
 
+\Tester\Environment::lock('database');
 id((new RepositoryTest))->run();
