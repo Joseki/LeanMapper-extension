@@ -21,6 +21,7 @@ date_default_timezone_set('Europe/Prague');
 
 // create temporary directory
 define('TEMP_DIR', __DIR__ . '/../temp/' . (isset($_SERVER['argv']) ? md5(serialize($_SERVER['argv'])) : getmypid()));
+define('LOCK_DIR', TEMP_DIR . '/..');
 Tester\Helpers::purge(TEMP_DIR);
 
 $_SERVER = array_intersect_key(
