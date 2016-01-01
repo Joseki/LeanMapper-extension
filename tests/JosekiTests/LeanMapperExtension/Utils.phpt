@@ -16,4 +16,4 @@ class UtilsTest extends Tester\TestCase
 
 }
 
-id((new UtilsTest))->run();
+run(new UtilsTest());

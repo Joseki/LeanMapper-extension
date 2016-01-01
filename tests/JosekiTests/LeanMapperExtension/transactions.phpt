@@ -78,4 +78,4 @@ class TransactionsTest extends Tester\TestCase
 }
 
 \Tester\Environment::lock('database', LOCK_DIR);
-id((new TransactionsTest))->run();
+run(new TransactionsTest());

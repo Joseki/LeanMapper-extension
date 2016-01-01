@@ -63,4 +63,4 @@ class MapperTest extends Tester\TestCase
     }
 }
 
-id(new MapperTest($container))->run();
+run(new MapperTest($container));
