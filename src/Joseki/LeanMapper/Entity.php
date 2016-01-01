@@ -61,10 +61,21 @@ class BaseEntity extends Entity
     {
         $property = $this->getCurrentReflection()->getEntityProperty($name);
         $relationship = $property->getRelationship();
-        if (($relationship instanceof HasOne) and !($value instanceof \LeanMapper\Entity)) {
-            if (is_string($value) and ctype_digit($value)) {
-                settype($value, 'integer');
+        if ($relationship instanceof HasOne && !$value instanceof \LeanMapper\Entity) {
+
+            $targetEntityClass = $property->getType();
+            /** @var Entity $entity */
+            $entity = new $targetEntityClass;
+            $primaryKey = 'id';
+            $targetColumnProperty = $entity->getReflection()->getEntityProperty($primaryKey);
+
+            if ($targetColumnProperty->isBasicType()) {
+                $type = $targetColumnProperty->getType();
+                if (in_array($type, ['integer', 'float']) && is_string($value) && ctype_digit($value)) {
+                    settype($value, $type);
+                }
             }
+
             $this->row->{$property->getColumn()} = $value;
             $this->row->cleanReferencedRowsCache(
                 $relationship->getTargetTable(),
