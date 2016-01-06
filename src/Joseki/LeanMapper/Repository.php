@@ -91,7 +91,7 @@ abstract class Repository extends LR
             ->removeClause('offset')
             ->fetch();
         if ($row === false) {
-            throw new NotFoundException('Entity not found.');
+            throw new NotFoundException(sprintf('Entity not found in sql \n%s', \dibi::$sql));
         }
         return $this->createEntity($row);
     }
