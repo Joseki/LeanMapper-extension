@@ -50,6 +50,24 @@ class DIExtensionTest extends \Tester\TestCase
 
         Assert::equal(2, count($container->findByType('Joseki\LeanMapper\Repository')));
     }
+
+
+
+    public function testRepositorySchemaMap()
+    {
+        $configurator = $this->prepareConfigurator();
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.4.neon', $configurator::NONE);
+
+        /** @var \Nette\DI\Container $container */
+        $container = $configurator->createContainer();
+
+        Assert::equal(2, count($container->findByType('Joseki\LeanMapper\Repository')));
+
+        /** @var \Joseki\LeanMapper\PackageMapper $mapper */
+        $mapper = $container->getByType('Joseki\LeanMapper\PackageMapper');
+        Assert::equal('myschema.book', $mapper->getTableByRepositoryClass('UnitTests\Tables\BookRepository'));
+        Assert::equal('dbo.tag', $mapper->getTableByRepositoryClass('UnitTests\Tables\TagRepository'));
+    }
 }
 
 \run(new DIExtensionTest());

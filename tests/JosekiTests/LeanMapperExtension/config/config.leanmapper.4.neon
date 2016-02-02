@@ -1,0 +1,19 @@
+extensions:
+  LeanMapper: Joseki\LeanMapper\DI\Extension
+
+LeanMapper:
+  db:
+    host: %db.host%
+    username: %db.username%
+    password: %db.password%
+    driver: %db.driver%
+    database: %db.database%
+
+  scanDirs:
+    - %appDir%/Tables/DI
+
+  defaultSchema: dbo
+  schemaMap:
+    myschema:
+      - UnitTests\Tables\BookRepository
+
