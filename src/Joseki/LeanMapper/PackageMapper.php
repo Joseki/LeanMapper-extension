@@ -3,25 +3,31 @@
 namespace Joseki\LeanMapper;
 
 use LeanMapper\Row;
+use Nette\Utils\Strings;
 
 class PackageMapper extends Mapper
 {
 
     /** @var array */
-    private $tables = [];
+    private $tableToRepository;
 
     /** @var array */
-    private $repositories = [];
+    private $tableToSchema;
+
+    /** @var array */
+    private $repositoryToTable;
 
 
 
     /**
-     * @param array $tables
+     * @param array $tableToRepository
+     * @param array $tableToSchema
      */
-    public function __construct(array $tables = array())
+    public function __construct(array $tableToRepository = [], array $tableToSchema = [])
     {
-        $this->tables = $tables;
-        $this->repositories = array_flip($tables);
+        $this->tableToRepository = $tableToRepository;
+        $this->tableToSchema = $tableToSchema;
+        $this->repositoryToTable = array_flip($tableToRepository);
     }
 
 
@@ -31,7 +37,10 @@ class PackageMapper extends Mapper
      */
     public function getEntityClass($table, Row $row = null)
     {
-        $repositoryClass = $this->tables[$table];
+        $parts = explode('.', $table);
+        $table = array_pop($parts);
+
+        $repositoryClass = $this->tableToRepository[$table];
         return substr($repositoryClass, 0, -10);
     }
 
@@ -42,7 +51,23 @@ class PackageMapper extends Mapper
      */
     public function getTableByRepositoryClass($repositoryClass)
     {
-        return isset($this->repositories[$repositoryClass]) ? $this->repositories[$repositoryClass] : null;
+        if (Strings::endsWith($repositoryClass, 'ClosureRepository')) {
+            $class = substr($repositoryClass, 0, -strlen('ClosureRepository')) . 'Repository';
+            if (in_array('Joseki\LeanMapper\ClosureTable\ClosureRepositoryTrait', class_uses($class))) {
+                $repositoryClass = $closure = $class;
+            }
+        }
+
+        if (!array_key_exists($repositoryClass, $this->repositoryToTable)) {
+            throw new InvalidArgumentException(sprintf('Class "%s" not registered in Mapper', $repositoryClass));
+        }
+
+        $table = $this->repositoryToTable[$repositoryClass];
+        $schema = $this->tableToSchema[$table];
+        if (isset($closure)) {
+            $table .= '_closure';
+        }
+        return $schema ? implode('.', [$schema, $table]) : $table;
     }
 
 

@@ -35,16 +35,16 @@ class Extension extends Nette\DI\CompilerExtension
             $this->validateRepositories($schemaRepositories);
         }
 
-        $tables = $this->mergeTables($this->findRepositories($config), $config['map']);
-        $tables = $this->mapSchemas($tables, $config['schemaMap'], $config['defaultSchema']);
+        $tableToRepository = $this->mergeTables($this->findRepositories($config), $config['map']);
+        $tableToSchema = $this->mapSchemas($tableToRepository, $config['schemaMap'], $config['defaultSchema']);
 
-        foreach ($tables as $table => $repositoryClass) {
+        foreach ($tableToRepository as $table => $repositoryClass) {
             $container->addDefinition($this->prefix('table.' . $table))
                 ->setClass($repositoryClass);
         }
 
         $container->addDefinition($this->prefix('mapper'))
-            ->setClass('Joseki\LeanMapper\PackageMapper', [$tables]);
+            ->setClass('Joseki\LeanMapper\PackageMapper', [$tableToRepository, $tableToSchema]);
 
         $container->addDefinition($this->prefix('entityFactory'))
             ->setClass('LeanMapper\DefaultEntityFactory');
@@ -109,29 +109,21 @@ class Extension extends Nette\DI\CompilerExtension
 
 
 
-    private function mapSchemas(array $tables, array $schemas, $defaultSchema)
+    private function mapSchemas(array $tableToRepository, array $schemaMap, $defaultSchema)
     {
-        if (!$defaultSchema) {
-            return $tables;
-        }
+        /** @var array $tableToSchema TABLE => SCHEMA */
+        $tableToSchema = array_fill_keys(array_keys($tableToRepository), $defaultSchema);
 
-        /** @var array $foundTables REPOSITORY => TABLE */
-        $foundTables = array_flip($tables);
-        /** @var array $pairs REPOSITORY => SCHEMA */
-        $pairs = array_fill_keys(array_values($tables), $defaultSchema);
+        /** @var array $repositoryToTable REPOSITORY => TABLE */
+        $repositoryToTable = array_flip($tableToRepository);
 
-        foreach ($schemas as $name => $repositories) {
-            foreach ($repositories as $repository) {
-                $pairs[$repository] = $name;
+        foreach ($schemaMap as $schema => $repositoryList) {
+            foreach ($repositoryList as $repository) {
+                $table = $repositoryToTable[$repository];
+                $tableToSchema[$table] = $schema;
             }
         }
-
-        $result = [];
-        foreach ($foundTables as $repository => $table) {
-            $newTable = sprintf('%s.%s', $pairs[$repository], $table);
-            $result[$newTable] = $repository;
-        }
-        return $result;
+        return $tableToSchema;
     }
 
 
