@@ -6,7 +6,6 @@ use Tester\Assert;
 use UnitTests\Tables\CategoryRepository;
 
 $container = require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/ServiceLocator.php';
 
 class RepositoryTest extends Tester\TestCase
 {

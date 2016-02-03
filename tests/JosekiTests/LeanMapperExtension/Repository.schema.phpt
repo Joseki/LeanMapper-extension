@@ -6,9 +6,8 @@ use Nette\Utils\Random;
 use Tester\Assert;
 
 $container = require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/ServiceLocator.php';
 
-class SchemaUsageTest extends Tester\TestCase
+class RepositorySchemaTest extends Tester\TestCase
 {
 
     private function prepareConfigurator()
@@ -41,28 +40,28 @@ class SchemaUsageTest extends Tester\TestCase
         $fluent = $bookRepository->apply(new Query());
         Assert::same(
             "SELECT `myschema`.`book`.* FROM `myschema`.`book`",
-            (string) $fluent
+            (string)$fluent
         );
 
         $fluent = $tagRepository->apply(new Query());
         Assert::same(
             "SELECT `dbo`.`tag`.* FROM `dbo`.`tag`",
-            (string) $fluent
+            (string)$fluent
         );
 
         $fluent = $tagRepository->apply((new Query())->where('@id', 5));
         Assert::same(
             "SELECT `dbo`.`tag`.* FROM `dbo`.`tag` WHERE (`dbo`.`tag`.`id` = '5')",
-            (string) $fluent
+            (string)$fluent
         );
 
         $fluent = $tagRepository->apply((new Query())->orderBy('@id'));
         Assert::same(
             "SELECT `dbo`.`tag`.* FROM `dbo`.`tag` ORDER BY `dbo`.`tag`.`id`",
-            (string) $fluent
+            (string)$fluent
         );
     }
 
 }
 
-run(new SchemaUsageTest());
+run(new RepositorySchemaTest());

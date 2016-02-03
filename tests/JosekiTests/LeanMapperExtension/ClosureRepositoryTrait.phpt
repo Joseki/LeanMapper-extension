@@ -4,53 +4,56 @@
  * TEST: closure table test.
  *
  * @phpVersion 5.4
+ * @testCase
  */
 
-use JosekiTests\LeanMapperExtension\MapperMock;
-use JosekiTests\LeanMapperExtension\ServiceLocator;
-use JosekiTests\LeanMapperExtension\Tables\CategoryRepository;
-use LeanMapper\DefaultEntityFactory;
+use Nette\Configurator;
+use Nette\Utils\Random;
 use Tester\Assert;
+use UnitTests\Tables\CategoryRepository;
 
 $container = require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/ServiceLocator.php';
 
 class ClosureRepositoryTraitTest extends Tester\TestCase
 {
-    /** @var  LeanMapper\Connection */
-    public $connection;
-
-    /** @var  MapperMock */
-    private $mapper;
-
-    /** @var  DefaultEntityFactory */
-    private $entityFactory;
 
     /** @var  CategoryRepository */
     private $repository;
 
 
 
-    function __construct()
+    private function prepareConfigurator()
     {
-        $this->connection = ServiceLocator::getConnection();
-        $this->connection->loadFile(__DIR__ . '/db/page-dump.sql');
+        $configurator = new Configurator;
+        $configurator->setTempDirectory(TEMP_DIR);
+        $configurator->addParameters(['container' => ['class' => 'SystemContainer_' . Random::generate()]]);
+
+        $configurator->addConfig(__DIR__ . '/config/config.local.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.3.neon', $configurator::NONE);
+
+        return $configurator;
     }
 
 
 
     function setUp()
     {
-        $this->mapper = ServiceLocator::getMapper();
-        $this->entityFactory = new DefaultEntityFactory();
-        $this->repository = new CategoryRepository($this->connection, $this->mapper, $this->entityFactory);
+        $configurator = $this->prepareConfigurator();
+
+        /** @var \Nette\DI\Container $container */
+        $container = $configurator->createContainer();
+
+        $connection = $container->getService('LeanMapper.connection');
+        $connection->loadFile(__DIR__ . '/db/page-dump.sql');
+
+        $this->repository = $container->getService('LeanMapper.table.category');
     }
 
 
 
     private function simplifyTree($data)
     {
-        $children = array();
+        $children = [];
         foreach ($data as $node) {
             $children[$node->data->id] = $this->simplifyTree($node->children);
         }
@@ -63,44 +66,44 @@ class ClosureRepositoryTraitTest extends Tester\TestCase
     {
         $tree = $this->repository->getSubtree(1);
         $actual = $this->simplifyTree($tree);
-        $expected = array(
-            2 => array(
-                3 => array(),
-                4 => array(),
-            ),
-            5 => array(
-                6 => array(
-                    11 => array(),
-                    12 => array(),
-                ),
-                7 => array(),
-            ),
-            8 => array(
-                9 => array(),
-                10 => array(),
-            ),
-        );
+        $expected = [
+            2 => [
+                3 => [],
+                4 => [],
+            ],
+            5 => [
+                6 => [
+                    11 => [],
+                    12 => [],
+                ],
+                7 => [],
+            ],
+            8 => [
+                9 => [],
+                10 => [],
+            ],
+        ];
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(5);
         $actual = $this->simplifyTree($tree);
-        $expected = array(
-            6 => array(
-                11 => array(),
-                12 => array(),
-            ),
-            7 => array(),
-        );
+        $expected = [
+            6 => [
+                11 => [],
+                12 => [],
+            ],
+            7 => [],
+        ];
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(7); // list
         $actual = $this->simplifyTree($tree);
-        $expected = array();
+        $expected = [];
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(50); // does not exist
         $actual = $this->simplifyTree($tree);
-        $expected = array();
+        $expected = [];
         Assert::equal($expected, $actual);
     }
 
@@ -110,15 +113,18 @@ class ClosureRepositoryTraitTest extends Tester\TestCase
     {
         $entities = $this->repository->getParents(4);
         $actual = array_keys($entities);
-        $expected = array(4, 2, 1);
+        $expected = [4, 2, 1];
         Assert::equal($expected, $actual);
 
         $entities = $this->repository->getParents(12);
         $actual = array_keys($entities);
-        $expected = array(12, 6, 5, 1);
+        $expected = [12, 6, 5, 1];
         Assert::equal($expected, $actual);
 
-        Assert::equal("  SELECT `c`.* FROM `category` AS `c` JOIN `category_closure` AS `cc` ON `c`.`id` = `cc`.ancestor WHERE `cc`.descendant = '12' ORDER BY `cc`.depth ASC", dibi::$sql);
+        Assert::equal(
+            "  SELECT `c`.* FROM `category` AS `c` JOIN `category_closure` AS `cc` ON `c`.`id` = `cc`.ancestor WHERE `cc`.descendant = '12' ORDER BY `cc`.depth ASC",
+            dibi::$sql
+        );
     }
 
 
@@ -127,17 +133,17 @@ class ClosureRepositoryTraitTest extends Tester\TestCase
     {
         $entities = $this->repository->getChildren(4);
         $actual = array_keys($entities);
-        $expected = array();
+        $expected = [];
         Assert::equal($expected, $actual);
 
         $entities = $this->repository->getChildren(1);
         $actual = array_keys($entities);
-        $expected = array(2, 5, 8);
+        $expected = [2, 5, 8];
         Assert::equal($expected, $actual);
 
         $entities = $this->repository->getChildren(6);
         $actual = array_keys($entities);
-        $expected = array(11, 12);
+        $expected = [11, 12];
         Assert::equal($expected, $actual);
     }
 }

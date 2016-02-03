@@ -3,7 +3,6 @@
 use Tester\Assert;
 
 $container = require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/ServiceLocator.php';
 
 class UtilsTest extends Tester\TestCase
 {

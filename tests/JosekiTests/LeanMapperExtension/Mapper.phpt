@@ -1,20 +1,31 @@
 <?php
 
+namespace JosekiTests\LeanMapperExtension;
+
+use Joseki\LeanMapper\Mapper;
 use Tester\Assert;
+use Tester\TestCase;
 
 $container = require __DIR__ . '/../bootstrap.php';
-require __DIR__ . '/ServiceLocator.php';
 
-class MapperTest extends Tester\TestCase
+class MapperMock extends Mapper
 {
-    /** @var  JosekiTests\LeanMapperExtension\MapperMock */
+
+    /** @var string */
+    protected $defaultEntityNamespace = 'JosekiTests\LeanMapperExtension\Tables';
+
+}
+
+class MapperTest extends TestCase
+{
+    /** @var  MapperMock */
     private $mapper;
 
 
 
     function setUp()
     {
-        $this->mapper = JosekiTests\LeanMapperExtension\ServiceLocator::getMapper();
+        $this->mapper = new MapperMock(['Special', 'camelCase']);
     }
 
 
