@@ -15,7 +15,7 @@ use Tester\Assert;
 $container = require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/ServiceLocator.php';
 
-class ClosureTableTest extends Tester\TestCase
+class ClosureRepositoryTraitTest extends Tester\TestCase
 {
     /** @var  LeanMapper\Connection */
     public $connection;
@@ -48,11 +48,11 @@ class ClosureTableTest extends Tester\TestCase
 
 
 
-    private function simplifieTree($data)
+    private function simplifyTree($data)
     {
         $children = array();
         foreach ($data as $node) {
-            $children[$node->data->id] = $this->simplifieTree($node->children);
+            $children[$node->data->id] = $this->simplifyTree($node->children);
         }
         return $children;
     }
@@ -62,7 +62,7 @@ class ClosureTableTest extends Tester\TestCase
     public function testLeanMapperTree()
     {
         $tree = $this->repository->getSubtree(1);
-        $actual = $this->simplifieTree($tree);
+        $actual = $this->simplifyTree($tree);
         $expected = array(
             2 => array(
                 3 => array(),
@@ -83,7 +83,7 @@ class ClosureTableTest extends Tester\TestCase
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(5);
-        $actual = $this->simplifieTree($tree);
+        $actual = $this->simplifyTree($tree);
         $expected = array(
             6 => array(
                 11 => array(),
@@ -94,12 +94,12 @@ class ClosureTableTest extends Tester\TestCase
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(7); // list
-        $actual = $this->simplifieTree($tree);
+        $actual = $this->simplifyTree($tree);
         $expected = array();
         Assert::equal($expected, $actual);
 
         $tree = $this->repository->getSubtree(50); // does not exist
-        $actual = $this->simplifieTree($tree);
+        $actual = $this->simplifyTree($tree);
         $expected = array();
         Assert::equal($expected, $actual);
     }
@@ -143,4 +143,4 @@ class ClosureTableTest extends Tester\TestCase
 }
 
 \Tester\Environment::lock('database', LOCK_DIR);
-run(new ClosureTableTest());
+run(new ClosureRepositoryTraitTest());
