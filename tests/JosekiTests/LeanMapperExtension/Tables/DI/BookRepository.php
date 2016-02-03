@@ -2,6 +2,7 @@
 
 namespace UnitTests\Tables;
 
+use Joseki\LeanMapper\Query;
 use Joseki\LeanMapper\Repository;
 use LeanMapperQuery\IQuery;
 
@@ -14,5 +15,10 @@ use LeanMapperQuery\IQuery;
  */
 class BookRepository extends Repository
 {
+
+    public function apply(Query $query)
+    {
+        return parent::apply($query);
+    }
 
 }
