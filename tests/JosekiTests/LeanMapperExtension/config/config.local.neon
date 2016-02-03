@@ -1,7 +1,7 @@
 parameters:
   db:
     host: 127.0.0.1
-    driver: mysql
+    driver: mysqli
     database: testing
     username: travis
     password:
