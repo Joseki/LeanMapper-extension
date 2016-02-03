@@ -79,4 +79,19 @@ class PackageMapper extends Mapper
     {
         return $this->getTableByRepositoryClass($entityClass . 'Repository');
     }
+
+
+
+    /**
+     * @param string $sourceTable
+     * @param string $targetTable
+     * @return string
+     */
+    public function getRelationshipColumn($sourceTable, $targetTable)
+    {
+        $parts = explode('.', $targetTable);
+        $table = array_pop($parts);
+
+        return $table;
+    }
 }
