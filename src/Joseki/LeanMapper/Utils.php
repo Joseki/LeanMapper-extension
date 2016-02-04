@@ -6,7 +6,7 @@ class Utils
 {
 
     /**
-     * camelCase -> underdash_separated.
+     * camelCase -> camel_case
      * @param  string
      * @return string
      */
@@ -21,7 +21,7 @@ class Utils
 
 
     /**
-     * underdash_separated -> camelCase
+     * camel_case -> camelCase
      * @param  string
      * @return string
      */
@@ -32,6 +32,23 @@ class Utils
         $s = substr(ucwords('x' . $s), 1);
         $s = str_replace(' ', '', $s);
         return $s;
+    }
+
+
+
+    /**
+     * Trim database schema from table
+     * schema.table => table
+     *
+     * @param string $table
+     * @return string
+     */
+    public static function trimTableSchema($table)
+    {
+        $parts = explode('.', $table);
+        $table = array_pop($parts);
+
+        return $table;
     }
 
 
@@ -53,6 +70,13 @@ class Utils
 
 
 
+    /**
+     * Returns namespace of a given class
+     * App\Entity\User => App\Entity
+     *
+     * @param $class
+     * @return string
+     */
     public static function extractNamespace($class)
     {
         $class = ltrim($class, '\\');

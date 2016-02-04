@@ -1,13 +1,17 @@
 <?php
 
+namespace JosekiTests\LeanMapperExtension;
+
+use Joseki\LeanMapper\PackageMapper;
 use LeanMapper\Entity;
 use Nette\Configurator;
 use Nette\Utils\Random;
 use Tester\Assert;
+use Tester\TestCase;
 
 $container = require __DIR__ . '/../bootstrap.php';
 
-class PackageMapperSchemaTest extends Tester\TestCase
+class PackageMapperSchemaTest extends TestCase
 {
 
     private function prepareConfigurator()
@@ -60,7 +64,7 @@ class PackageMapperSchemaTest extends Tester\TestCase
         Assert::same('role', $mapper->getColumn('UnitTests\Tables\Permission', 'role'));
         Assert::same('section', $mapper->getColumn('UnitTests\Tables\Permission', 'section'));
 
-        $roleEntity = new UnitTests\Tables\Permission;
+        $roleEntity = new \UnitTests\Tables\Permission;
         $reflection = $roleEntity->getReflection($mapper);
         $property = $reflection->getEntityProperty('role');
 
@@ -84,6 +88,26 @@ class PackageMapperSchemaTest extends Tester\TestCase
 
         Assert::same('string', $roleProperty->getType());
         Assert::same('role', $relationship->getColumnReferencingTargetTable());
+    }
+
+
+
+    public function testRelationshipTable()
+    {
+        $mapper = new PackageMapper([], [], 'dbo');
+        $sourceTable = 'dbo.user';
+        $targetTable = 'dbo.role';
+        Assert::same('dbo.user_role', $mapper->getRelationshipTable($sourceTable, $targetTable));
+    }
+
+
+
+    public function testRelationshipColumn()
+    {
+        $mapper = new PackageMapper([], [], 'dbo');
+        $sourceTable = 'dbo.user';
+        $targetTable = 'dbo.role';
+        Assert::same('role', $mapper->getRelationshipColumn($sourceTable, $targetTable));
     }
 
 }

@@ -1,20 +1,23 @@
 <?php
 
+namespace JosekiTests\LeanMapperExtension;
+
 use Nette\Configurator;
 use Nette\Utils\Random;
 use Tester\Assert;
+use Tester\TestCase;
 use UnitTests\Tables\CategoryRepository;
 
 $container = require __DIR__ . '/../bootstrap.php';
 
-class RepositoryTest extends Tester\TestCase
+class RepositoryTest extends TestCase
 {
 
     private function prepareConfigurator()
     {
         $configurator = new Configurator;
         $configurator->setTempDirectory(TEMP_DIR);
-        $configurator->addParameters(array('container' => array('class' => 'SystemContainer_' . Random::generate())));
+        $configurator->addParameters(['container' => ['class' => 'SystemContainer_' . Random::generate()]]);
 
         $configurator->addConfig(__DIR__ . '/config/config.local.neon', $configurator::NONE);
 
@@ -23,7 +26,7 @@ class RepositoryTest extends Tester\TestCase
 
 
 
-    public function testRepository()
+    public function testFindPairsBy()
     {
         $configurator = $this->prepareConfigurator();
         $configurator->addConfig(__DIR__ . '/config/config.leanmapper.3.neon', $configurator::NONE);

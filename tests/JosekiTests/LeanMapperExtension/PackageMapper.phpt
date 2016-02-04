@@ -1,6 +1,6 @@
 <?php
 
-namespace JosekiTests\Migration;
+namespace JosekiTests\LeanMapperExtension;
 
 use Nette\Configurator;
 use Nette\Utils\Random;
@@ -18,7 +18,7 @@ class PackageMapperTest extends \Tester\TestCase
     {
         $configurator = new Configurator;
         $configurator->setTempDirectory(TEMP_DIR);
-        $configurator->addParameters(array('container' => array('class' => 'SystemContainer_' . Random::generate())));
+        $configurator->addParameters(['container' => ['class' => 'SystemContainer_' . Random::generate()]]);
 
         $configurator->addConfig(__DIR__ . '/config/config.local.neon', $configurator::NONE);
 

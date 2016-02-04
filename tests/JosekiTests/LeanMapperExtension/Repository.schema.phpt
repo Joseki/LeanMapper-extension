@@ -1,13 +1,16 @@
 <?php
 
+namespace JosekiTests\LeanMapperExtension;
+
 use Joseki\LeanMapper\Query;
 use Nette\Configurator;
 use Nette\Utils\Random;
 use Tester\Assert;
+use Tester\TestCase;
 
 $container = require __DIR__ . '/../bootstrap.php';
 
-class RepositorySchemaTest extends Tester\TestCase
+class RepositorySchemaTest extends TestCase
 {
 
     private function prepareConfigurator()

@@ -7,14 +7,17 @@
  * @testCase
  */
 
+namespace JosekiTests\LeanMapperExtension;
+
 use Nette\Configurator;
 use Nette\Utils\Random;
 use Tester\Assert;
+use Tester\TestCase;
 use UnitTests\Tables\CategoryRepository;
 
 $container = require __DIR__ . '/../bootstrap.php';
 
-class ClosureRepositoryTraitTest extends Tester\TestCase
+class ClosureRepositoryTraitTest extends TestCase
 {
 
     /** @var  CategoryRepository */
@@ -123,7 +126,7 @@ class ClosureRepositoryTraitTest extends Tester\TestCase
 
         Assert::equal(
             "  SELECT `c`.* FROM `category` AS `c` JOIN `category_closure` AS `cc` ON `c`.`id` = `cc`.ancestor WHERE `cc`.descendant = '12' ORDER BY `cc`.depth ASC",
-            dibi::$sql
+            \dibi::$sql
         );
     }
 

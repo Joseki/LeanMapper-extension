@@ -1,5 +1,7 @@
 <?php
 
+namespace JosekiTests\LeanMapperExtension;
+
 use Tester\Assert;
 use Tester\TestCase;
 use UnitTests\Tables\Person;
@@ -11,13 +13,15 @@ class EntitySetterTest extends TestCase
 
     public function testDetachedSetter()
     {
-        Assert::noError(function(){
-            $person = new Person();
-            $person->id = 'name';
-            $person->person1 = 'John';
-            $person->person1 = null;
-            $person->integer = 5;
-        });
+        Assert::noError(
+            function () {
+                $person = new Person();
+                $person->id = 'name';
+                $person->person1 = 'John';
+                $person->person1 = null;
+                $person->integer = 5;
+            }
+        );
     }
 }
 

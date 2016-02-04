@@ -1,21 +1,24 @@
 <?php
 
+namespace JosekiTests\LeanMapperExtension;
+
 use Nette\Configurator;
 use Nette\Utils\Callback;
 use Nette\Utils\Random;
 use Tester\Assert;
+use Tester\TestCase;
 use UnitTests\Tables\CategoryRepository;
 
 $container = require __DIR__ . '/../bootstrap.php';
 
-class TransactionsTest extends Tester\TestCase
+class RepositoryInTransactionTest extends TestCase
 {
 
     private function prepareConfigurator()
     {
         $configurator = new Configurator;
         $configurator->setTempDirectory(TEMP_DIR);
-        $configurator->addParameters(array('container' => array('class' => 'SystemContainer_' . Random::generate())));
+        $configurator->addParameters(['container' => ['class' => 'SystemContainer_' . Random::generate()]]);
 
         $configurator->addConfig(__DIR__ . '/config/config.local.neon', $configurator::NONE);
 
@@ -46,7 +49,7 @@ class TransactionsTest extends Tester\TestCase
         };
         $errorCallback = function ($id) use ($repository, $callback) {
             Callback::invokeArgs($callback, [$id]);
-            throw new Exception;
+            throw new \Exception;
         };
         $deepCallback = function ($id1, $id2, $id3) use ($repository, $callback, $errorCallback) {
             $repository->inTransaction($callback, [$id1]);
@@ -62,7 +65,7 @@ class TransactionsTest extends Tester\TestCase
         Assert::equal(1, $repository->findCountBy($repository->createQuery()->where('@id', 1000)));
 
         Assert::exception(
-            function () use($repository, $errorCallback) {
+            function () use ($repository, $errorCallback) {
                 $repository->inTransaction($errorCallback, [1001]);
             },
             'Exception'
@@ -78,4 +81,4 @@ class TransactionsTest extends Tester\TestCase
 }
 
 \Tester\Environment::lock('database', LOCK_DIR);
-run(new TransactionsTest());
+run(new RepositoryInTransactionTest());

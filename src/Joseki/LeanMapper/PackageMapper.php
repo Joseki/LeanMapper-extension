@@ -17,17 +17,22 @@ class PackageMapper extends Mapper
     /** @var array */
     private $repositoryToTable;
 
+    /** @var null */
+    private $defaultSchema;
+
 
 
     /**
      * @param array $tableToRepository
      * @param array $tableToSchema
+     * @param null $defaultSchema
      */
-    public function __construct(array $tableToRepository = [], array $tableToSchema = [])
+    public function __construct(array $tableToRepository = [], array $tableToSchema = [], $defaultSchema = null)
     {
         $this->tableToRepository = $tableToRepository;
         $this->tableToSchema = $tableToSchema;
         $this->repositoryToTable = array_flip($tableToRepository);
+        $this->defaultSchema = $defaultSchema;
     }
 
 
@@ -37,8 +42,7 @@ class PackageMapper extends Mapper
      */
     public function getEntityClass($table, Row $row = null)
     {
-        $parts = explode('.', $table);
-        $table = array_pop($parts);
+        $table = Utils::trimTableSchema($table);
 
         $repositoryClass = $this->tableToRepository[$table];
         return substr($repositoryClass, 0, -10);
@@ -89,9 +93,23 @@ class PackageMapper extends Mapper
      */
     public function getRelationshipColumn($sourceTable, $targetTable)
     {
-        $parts = explode('.', $targetTable);
-        $table = array_pop($parts);
+        return Utils::trimTableSchema($targetTable);
+    }
 
-        return $table;
+
+
+    /*
+	 * @inheritdoc
+	 */
+    public function getRelationshipTable($sourceTable, $targetTable)
+    {
+        $relationshipTable = sprintf(
+            '%s%s%s',
+            Utils::trimTableSchema($sourceTable),
+            $this->relationshipTableGlue,
+            Utils::trimTableSchema($targetTable)
+        );
+
+        return $this->defaultSchema ? sprintf('%s.%s', $this->defaultSchema, $relationshipTable) : $relationshipTable;
     }
 }
