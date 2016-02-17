@@ -23,16 +23,20 @@ class PackageMapper extends Mapper
 
 
     /**
-     * @param array $tableToRepository
-     * @param array $tableToSchema
      * @param null $defaultSchema
      */
-    public function __construct(array $tableToRepository = [], array $tableToSchema = [], $defaultSchema = null)
+    public function __construct($defaultSchema = null)
     {
-        $this->tableToRepository = $tableToRepository;
-        $this->tableToSchema = $tableToSchema;
-        $this->repositoryToTable = array_flip($tableToRepository);
         $this->defaultSchema = $defaultSchema;
+    }
+
+
+
+    public function registerTable($table, $repositoryClass, $schema = null)
+    {
+        $this->tableToRepository[$table] = $repositoryClass;
+        $this->tableToSchema[$table] = $schema ?: $this->defaultSchema;
+        $this->repositoryToTable[$repositoryClass] = $table;
     }
 
 

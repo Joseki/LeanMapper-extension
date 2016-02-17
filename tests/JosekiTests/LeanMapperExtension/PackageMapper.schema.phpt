@@ -94,7 +94,7 @@ class PackageMapperSchemaTest extends TestCase
 
     public function testRelationshipTable()
     {
-        $mapper = new PackageMapper([], [], 'dbo');
+        $mapper = new PackageMapper('dbo');
         $sourceTable = 'dbo.user';
         $targetTable = 'dbo.role';
         Assert::same('dbo.user_role', $mapper->getRelationshipTable($sourceTable, $targetTable));

@@ -24,11 +24,24 @@ class Extension extends Nette\DI\CompilerExtension
 
 
 
-    public function loadConfiguration()
+    /**
+     * Returns extension configuration.
+     * @return array
+     */
+    public function getConfig()
     {
         $container = $this->getContainerBuilder();
         $this->defaults['scanDirs'] = $container->expand('%appDir%');
-        $config = $this->getConfig($this->defaults);
+
+        return parent::getConfig($this->defaults);
+    }
+
+
+
+    public function loadConfiguration()
+    {
+        $container = $this->getContainerBuilder();
+        $config = $this->getConfig();
 
         $this->validateRepositories($config['map']);
         foreach ($config['schemaMap'] as $schemaRepositories) {
@@ -36,7 +49,6 @@ class Extension extends Nette\DI\CompilerExtension
         }
 
         $tableToRepository = $this->mergeTables($this->findRepositories($config), $config['map']);
-        $tableToSchema = $this->mapSchemas($tableToRepository, $config['schemaMap'], $config['defaultSchema']);
 
         foreach ($tableToRepository as $table => $repositoryClass) {
             $container->addDefinition($this->prefix('table.' . $table))
@@ -44,7 +56,7 @@ class Extension extends Nette\DI\CompilerExtension
         }
 
         $container->addDefinition($this->prefix('mapper'))
-            ->setClass('Joseki\LeanMapper\PackageMapper', [$tableToRepository, $tableToSchema, $config['defaultSchema']]);
+            ->setClass('Joseki\LeanMapper\PackageMapper', [$config['defaultSchema']]);
 
         $container->addDefinition($this->prefix('entityFactory'))
             ->setClass('LeanMapper\DefaultEntityFactory');
@@ -67,6 +79,22 @@ class Extension extends Nette\DI\CompilerExtension
                 $fileLogger = $container->addDefinition($this->prefix('fileLogger'))->setClass('SavingFunds\LeanMapper\FileLogger');
                 $connection->addSetup([$fileLogger, 'register'], [$connection, $config['logFile']]);
             }
+        }
+    }
+
+
+
+    public function beforeCompile()
+    {
+        $container = $this->getContainerBuilder();
+        $config = $this->getConfig();
+
+        $tableToRepository = $this->mergeTables($this->findRepositories($config), $config['map']);
+        $tableToSchema = $this->mapSchemas($tableToRepository, $config['schemaMap'], $config['defaultSchema']);
+
+        $mapper = $container->getDefinition($this->prefix('mapper'));
+        foreach ($tableToRepository as $table => $repositoryClass) {
+            $mapper->addSetup('registerTable', [$table, $tableToRepository[$table], $tableToSchema[$table]]);
         }
     }
 
