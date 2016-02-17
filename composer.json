@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">= 5.3.0",
-        "tharos/leanmapper": "~2.1",
+        "tharos/leanmapper": "@dev",
         "joseki/leanmapper-query": "~1.0",
         "nette/robot-loader": "~2.1",
         "nette/utils": "~2.1"
