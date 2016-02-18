@@ -56,7 +56,7 @@ class Extension extends Nette\DI\CompilerExtension
         }
 
         $container->addDefinition($this->prefix('mapper'))
-            ->setClass('Joseki\LeanMapper\PackageMapper', [$config['defaultSchema']]);
+            ->setClass('Joseki\LeanMapper\PackageMapper');
 
         $container->addDefinition($this->prefix('entityFactory'))
             ->setClass('LeanMapper\DefaultEntityFactory');
@@ -93,6 +93,7 @@ class Extension extends Nette\DI\CompilerExtension
         $tableToSchema = $this->mapSchemas($tableToRepository, $config['schemaMap'], $config['defaultSchema']);
 
         $mapper = $container->getDefinition($this->prefix('mapper'));
+        $mapper->addSetup('setDefaultSchema', [$config['defaultSchema']]);
         foreach ($tableToRepository as $table => $repositoryClass) {
             $mapper->addSetup('registerTable', [$table, $tableToRepository[$table], $tableToSchema[$table]]);
         }

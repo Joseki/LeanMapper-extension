@@ -22,16 +22,6 @@ class PackageMapper extends Mapper
 
 
 
-    /**
-     * @param null $defaultSchema
-     */
-    public function __construct($defaultSchema = null)
-    {
-        $this->defaultSchema = $defaultSchema;
-    }
-
-
-
     public function registerTable($table, $repositoryClass, $schema = null)
     {
         $this->tableToRepository[$table] = $repositoryClass;
@@ -116,4 +106,25 @@ class PackageMapper extends Mapper
 
         return $this->defaultSchema ? sprintf('%s.%s', $this->defaultSchema, $relationshipTable) : $relationshipTable;
     }
+
+
+
+    /**
+     * @param null $defaultSchema
+     */
+    public function setDefaultSchema($defaultSchema)
+    {
+        $this->defaultSchema = $defaultSchema;
+    }
+
+
+
+    /**
+     * @return null
+     */
+    public function getDefaultSchema()
+    {
+        return $this->defaultSchema;
+    }
+
 }
