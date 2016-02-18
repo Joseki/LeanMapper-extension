@@ -27,8 +27,7 @@ class Utils
      */
     public static function underscoreToCamel($s)
     {
-        $s = strtolower($s);
-        $s = preg_replace('#_(?=[a-z])#', ' ', $s);
+        $s = preg_replace('#_(?=[a-zA-Z])#', ' ', $s);
         $s = substr(ucwords('x' . $s), 1);
         $s = str_replace(' ', '', $s);
         return $s;

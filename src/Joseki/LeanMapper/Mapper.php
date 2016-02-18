@@ -3,6 +3,7 @@
 namespace Joseki\LeanMapper;
 
 use LeanMapper\DefaultMapper;
+use LeanMapper\Entity;
 use LeanMapper\Row;
 
 /**
@@ -70,7 +71,16 @@ class Mapper extends DefaultMapper
      */
     public function getEntityField($table, $column)
     {
-        return Utils::underscoreToCamel($column);
+        $class = $this->getEntityClass($table);
+        /** @var Entity $entity */
+        $entity = new $class;
+        $reflection = $entity->getReflection($this);
+        foreach ($reflection->getEntityProperties() as $property) {
+            if ($property->getColumn() == $column) {
+                return Utils::underscoreToCamel($property->getName());
+            }
+        }
+        throw new InvalidArgumentException(sprintf("Could not find property for table '%s' and column '%s'", $table, $column));
     }
 
 

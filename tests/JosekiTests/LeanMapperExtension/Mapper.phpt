@@ -63,7 +63,9 @@ class MapperTest extends TestCase
 
     function testGetEntityField()
     {
-        Assert::same('pubDate', $this->mapper->getEntityField('book', 'pub_date'));
+        Assert::same('id', $this->mapper->getEntityField('user', 'id'));
+        Assert::same('address', $this->mapper->getEntityField('user', 'myaddress'));
+        Assert::same('firstName', $this->mapper->getEntityField('user', 'my_name'));
     }
 
 

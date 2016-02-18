@@ -21,6 +21,7 @@ class UtilsTest extends TestCase
     public function testUnderscoreToCamel()
     {
         Assert::same('camelCase', Utils::underscoreToCamel('camel_case'));
+        Assert::same('camelCase', Utils::underscoreToCamel('camelCase'));
     }
 
 
