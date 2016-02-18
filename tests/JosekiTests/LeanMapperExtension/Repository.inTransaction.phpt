@@ -34,7 +34,7 @@ class RepositoryInTransactionTest extends TestCase
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
-        $container->getByType('\DibiConnection')->loadFile(__DIR__ . '/db/page-dump.sql');
+        $container->getByType('\Dibi\Connection')->loadFile(__DIR__ . '/db/page-dump.sql');
 
         /** @var \UnitTests\Tables\CategoryRepository $repository */
         $repository = $container->getService('LeanMapper.table.category');

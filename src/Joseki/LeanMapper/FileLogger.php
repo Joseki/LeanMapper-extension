@@ -5,10 +5,10 @@ namespace Joseki\LeanMapper;
 class FileLogger
 {
 
-    public function register(\DibiConnection $connection, $path)
+    public function register(\Dibi\Connection $connection, $path)
     {
         $connection->onEvent[] = array(
-            new \DibiFileLogger($path, \DibiEvent::QUERY),
+            new \Dibi\Loggers\FileLogger($path, \Dibi\Event::QUERY),
             'logEvent'
         );
     }
