@@ -40,55 +40,26 @@ abstract class Repository extends LR
 
 
     /**
-     * @param Query|string $query
+     * @param Query $query
      * @return Entity[]
-     * @throws InvalidArgumentException
      */
-    public function findBy($query)
+    public function findBy(Query $query)
     {
-        if (func_num_args() > 1) {
-            $query = $this->createQuery();
-            call_user_func_array(array($query, 'where'), func_get_args());
-        }
-        if (!$query instanceof Query) {
-            if (is_object($query)) {
-                $class = get_class($query);
-                throw new InvalidArgumentException("Exptected instance of '\\Joseki\\LeanMapper\\Query', instance of '$class' given.");
-            } else {
-                $type = gettype($query);
-                throw new InvalidArgumentException("Exptected instance of '\\Joseki\\LeanMapper\\Query', '$type' given.");
-            }
-        }
-
         return $this->createEntities($this->apply($query)->fetchAll());
     }
 
 
 
     /**
-     * @param Query|string $query
+     * @param Query $query
      * @return Entity
-     * @throws InvalidArgumentException
      * @throws NotFoundException
      */
-    public function findOneBy($query)
+    public function findOneBy(Query $query)
     {
-        if (func_num_args() > 1) {
-            $query = $this->createQuery();
-            call_user_func_array(array($query, 'where'), func_get_args());
-        }
-        if (!$query instanceof Query) {
-            if (is_object($query)) {
-                $class = get_class($query);
-                throw new InvalidArgumentException("Exptected instance of '\\Joseki\\LeanMapper\\Query', instance of '$class' given.");
-            } else {
-                $type = gettype($query);
-                throw new InvalidArgumentException("Exptected instance of '\\Joseki\\LeanMapper\\Query', '$type' given.");
-            }
-        }
         $row = $this->apply($query)
-            ->removeClause('limit')
-            ->removeClause('offset')
+            ->removeClause('LIMIT')
+            ->removeClause('OFFSET')
             ->fetch();
         if ($row === false) {
             throw new NotFoundException(sprintf('Entity not found in sql \n%s', \dibi::$sql));
