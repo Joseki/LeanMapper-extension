@@ -11,8 +11,8 @@
     "require": {
         "php": ">= 5.3.0",
         "dibi/dibi": "~3.0",
-        "tharos/leanmapper": "@dev",
-        "joseki/leanmapper-query": "@dev",
+        "tharos/leanmapper": "dev-develop",
+        "joseki/leanmapper-query": "dev-master",
         "nette/robot-loader": "~2.1",
         "nette/utils": "~2.1"
     },
