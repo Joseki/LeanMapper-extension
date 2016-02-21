@@ -22,9 +22,7 @@ abstract class Repository extends LR
 
     protected function apply(Query $query)
     {
-        $fluent = $this->createFluent();
-        $query->applyQuery($fluent, $this->mapper);
-        return $fluent;
+        return $query->applyQuery($this->createFluent(), $this->mapper);
     }
 
 
@@ -45,7 +43,12 @@ abstract class Repository extends LR
      */
     public function findBy(Query $query)
     {
-        return $this->createEntities($this->apply($query)->fetchAll());
+        $fluent = $this->apply($query);
+        if (($fluent->_export('limit') || $fluent->_export('offset')) && !$fluent->_export('orderBy')) {
+            $fluent->orderBy($this->mapper->getPrimaryKey($this->getTable()));
+        }
+
+        return $this->createEntities($fluent->fetchAll());
     }
 
 
@@ -57,13 +60,16 @@ abstract class Repository extends LR
      */
     public function findOneBy(Query $query)
     {
-        $row = $this->apply($query)
-            ->removeClause('LIMIT')
-            ->removeClause('OFFSET')
-            ->fetch();
+        $fluent = $this->apply($query);
+        if (!$fluent->_export('orderBy')) {
+            $fluent->orderBy($this->mapper->getPrimaryKey($this->getTable()));
+        }
+        $row = $fluent->fetch();
+
         if ($row === false) {
             throw new NotFoundException(sprintf('Entity not found in sql \n%s', \dibi::$sql));
         }
+
         return $this->createEntity($row);
     }
 
@@ -120,6 +126,12 @@ abstract class Repository extends LR
 
 
 
+    /**
+     * @param $key
+     * @param $value
+     * @param Query|null $query
+     * @return array
+     */
     public function findPairsBy($key, $value, Query $query = null)
     {
         $class = $this->mapper->getEntityClass($this->getTable());
