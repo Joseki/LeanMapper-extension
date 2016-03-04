@@ -57,3 +57,16 @@ function run(Tester\TestCase $testCase)
 {
     $testCase->run(isset($_SERVER['argv'][1]) ? $_SERVER['argv'][1] : null);
 }
+
+$connection = new \LeanMapper\Connection(
+    [
+        'host' => '127.0.0.1',
+        'driver' => 'mysqli',
+        'database' => 'testing',
+        'username' => 'travis',
+        'password' => '',
+    ]
+);
+
+$mapper = new \Joseki\LeanMapper\PackageMapper();
+$entityFactory = new \LeanMapper\DefaultEntityFactory();

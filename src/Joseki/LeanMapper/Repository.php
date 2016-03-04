@@ -154,8 +154,21 @@ abstract class Repository extends LR
     public function get($id)
     {
         $primaryKey = $this->mapper->getPrimaryKey($this->getTable());
-        $column = $this->mapper->getColumn($this->mapper->getEntityClass($this->getTable()), $primaryKey);
-        $query = $this->createQuery()->where("@$column", $id);
+
+        $entityClass = $this->mapper->getEntityClass($this->getTable());
+        /** @var Entity $entity */
+        $entity = new $entityClass();
+        $reflection = $entity->getReflection($this->mapper);
+        foreach ($reflection->getEntityProperties() as $property) {
+            if ($property->getColumn() == $primaryKey) {
+                $field = $property->getName();
+                break;
+            }
+        }
+        if (!isset($field)) {
+            throw new InvalidStateException(sprintf("Could not find primary key for entity '%s'", $entityClass));
+        }
+        $query = $this->createQuery()->where("@$field", $id);
         return $this->findOneBy($query);
     }
 
