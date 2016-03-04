@@ -35,8 +35,8 @@ class BookRepository extends \Joseki\LeanMapper\Repository
 
 }
 
-$mapper->registerTable('author', AuthorRepository::class);
-$mapper->registerTable('book', BookRepository::class);
+$mapper->registerTable('author', 'AuthorRepository');
+$mapper->registerTable('book', 'BookRepository');
 $authorRepository = new AuthorRepository($connection, $mapper, $entityFactory);
 $bookRepository = new BookRepository($connection, $mapper, $entityFactory);
 
