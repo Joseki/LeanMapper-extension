@@ -67,7 +67,7 @@ abstract class Repository extends LR
         $row = $fluent->fetch();
 
         if ($row === false) {
-            throw new NotFoundException(sprintf('Entity not found in sql \n%s', \dibi::$sql));
+            throw new NotFoundException(sprintf('Entity not found in sql (%s)', \dibi::$sql));
         }
 
         return $this->createEntity($row);
