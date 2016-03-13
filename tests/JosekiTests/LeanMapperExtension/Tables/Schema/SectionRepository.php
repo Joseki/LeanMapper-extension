@@ -70,7 +70,7 @@ class SectionRepository extends Repository
                 $B,
                 $node,
                 $A,
-                $parent
+                $parent,
             ]
         );
     }

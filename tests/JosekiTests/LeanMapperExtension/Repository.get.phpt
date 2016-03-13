@@ -1,5 +1,7 @@
 <?php
 
+use Tester\Assert;
+
 require_once __DIR__ . '/../bootstrap.php';
 
 \Tester\Environment::lock('database', LOCK_DIR);
@@ -41,11 +43,11 @@ $authorRepository = new AuthorRepository($connection, $mapper, $entityFactory);
 $bookRepository = new BookRepository($connection, $mapper, $entityFactory);
 
 $author = $authorRepository->get(1);
-\Tester\Assert::equal(' SELECT `author`.* FROM `author` WHERE (`author`.`id` = 1) ORDER BY `id` LIMIT 1', \dibi::$sql);
+Assert::equal(' SELECT `author`.* FROM `author` WHERE (`author`.`id` = 1) ORDER BY `id` LIMIT 1', \dibi::$sql);
 $book = $bookRepository->get(2);
-\Tester\Assert::equal(' SELECT `book`.* FROM `book` WHERE (`book`.`id` = 2) ORDER BY `id` LIMIT 1', \dibi::$sql);
+Assert::equal(' SELECT `book`.* FROM `book` WHERE (`book`.`id` = 2) ORDER BY `id` LIMIT 1', \dibi::$sql);
 
 $book = new Book();
 $book->author = $author;
-\Tester\Assert::true($book->author instanceof Author);
-\Tester\Assert::equal(1, $book->author->id);
+Assert::true($book->author instanceof Author);
+Assert::equal(1, $book->author->id);
