@@ -45,4 +45,7 @@ $author = $authorRepository->get(1);
 $book = $bookRepository->get(2);
 \Tester\Assert::equal(' SELECT `book`.* FROM `book` WHERE (`book`.`id` = 2) ORDER BY `id` LIMIT 1', \dibi::$sql);
 
-\Tester\Assert::true(true);
+$book = new Book();
+$book->author = $author;
+\Tester\Assert::true($book->author instanceof Author);
+\Tester\Assert::equal(1, $book->author->id);

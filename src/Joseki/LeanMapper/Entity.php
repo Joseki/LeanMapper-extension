@@ -60,17 +60,16 @@ class BaseEntity extends Entity
     public function __set($name, $value)
     {
         $property = $this->getCurrentReflection()->getEntityProperty($name);
-        $relationship = $property->getRelationship();
-        if ($relationship instanceof HasOne && !$value instanceof \LeanMapper\Entity) {
-
+        if ($property && $property->hasRelationship() && $property->getRelationship() instanceof HasOne && !$value instanceof \LeanMapper\Entity) {
+            $relationship = $property->getRelationship();
             $targetEntityClass = $property->getType();
-            /** @var Entity $entity */
-            $entity = new $targetEntityClass;
-            $primaryKey = 'id';
-            $targetColumnProperty = $entity->getReflection()->getEntityProperty($primaryKey);
 
-            if ($targetColumnProperty->isBasicType()) {
-                $type = $targetColumnProperty->getType();
+            /** @var Entity $targetEntity */
+            $targetEntity = new $targetEntityClass;
+            $targetPrimaryKeyProperty = $targetEntity->getReflection()->getEntityProperty('id');
+
+            if ($targetPrimaryKeyProperty->isBasicType()) {
+                $type = $targetPrimaryKeyProperty->getType();
                 if (in_array($type, ['integer', 'float']) && is_string($value) && ctype_digit($value)) {
                     settype($value, $type);
                 }
