@@ -9,16 +9,16 @@ class PackageMapper extends Mapper
 {
 
     /** @var array */
-    private $tableToRepository;
+    protected $tableToRepository;
 
     /** @var array */
-    private $tableToSchema;
+    protected $tableToSchema;
 
     /** @var array */
-    private $repositoryToTable;
+    protected $repositoryToTable;
 
     /** @var null */
-    private $defaultSchema;
+    protected $defaultSchema;
 
 
 
